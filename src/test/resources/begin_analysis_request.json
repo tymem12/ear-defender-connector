@@ -1,0 +1,6 @@
+{
+  "startingPoint": "example-url",
+  "depth": 3,
+  "maxFiles": 100,
+  "model": "example-model1"
+}

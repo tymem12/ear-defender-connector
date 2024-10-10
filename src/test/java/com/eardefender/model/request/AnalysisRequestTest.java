@@ -1,5 +1,6 @@
 package com.eardefender.model.request;
 
+import com.eardefender.model.InputParams;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -7,6 +8,7 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,112 +18,53 @@ public class AnalysisRequestTest {
 
     private Validator validator;
 
+    private AnalysisRequest request;
+
     @BeforeEach
     public void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
+
+        request = new AnalysisRequest();
+
+        InputParams inputParams = new InputParams();
+        inputParams.setDepth(1);
+        inputParams.setStartingPoint("startingPoint");
+        inputParams.setModel("model");
+        inputParams.setMaxFiles(100);
+
+        request.setStatus("PROCESSING");
+        request.setFinishTimestamp("2005-07-16T19:20:40+01:00");
+        request.setPredictionResults(List.of());
+        request.setInputParams(inputParams);
     }
 
     @Test
     public void testValidAnalysisRequest() {
-        AnalysisRequest request = new AnalysisRequest();
-        request.setStartingPoint("start/point");
-        request.setDepth(5);
-        request.setMaxFiles(10);
-        request.setModel("test-model");
-
         Set<ConstraintViolation<AnalysisRequest>> violations = validator.validate(request);
 
         assertTrue(violations.isEmpty(), "No validation errors expected for valid request");
     }
 
     @Test
-    public void testInvalidAnalysisRequest_BlankStartingPoint() {
-        AnalysisRequest request = new AnalysisRequest();
-        request.setStartingPoint("");
-        request.setDepth(5);
-        request.setMaxFiles(10);
-        request.setModel("test-model");
+    public void testInvalidAnalysisRequest_InvalidStatus() {
+        request.setStatus("INVALID");
 
         Set<ConstraintViolation<AnalysisRequest>> violations = validator.validate(request);
 
         assertEquals(1, violations.size());
         ConstraintViolation<AnalysisRequest> violation = violations.iterator().next();
-        assertEquals("Starting point must not be blank", violation.getMessage());
+        assertEquals("Status must be one of the following: DOWNLOADING, PROCESSING, FINISHED", violation.getMessage());
     }
 
     @Test
-    public void testInvalidAnalysisRequest_NullDepth() {
-        AnalysisRequest request = new AnalysisRequest();
-        request.setStartingPoint("start/point");
-        request.setDepth(null);
-        request.setMaxFiles(10);
-        request.setModel("test-model");
+    public void testInvalidAnalysisRequest_InvalidTimestamp() {
+        request.setFinishTimestamp("Invalid");
 
         Set<ConstraintViolation<AnalysisRequest>> violations = validator.validate(request);
 
         assertEquals(1, violations.size());
         ConstraintViolation<AnalysisRequest> violation = violations.iterator().next();
-        assertEquals("Depth must not be null", violation.getMessage());
-    }
-
-    @Test
-    public void testInvalidAnalysisRequest_NegativeDepth() {
-        AnalysisRequest request = new AnalysisRequest();
-        request.setStartingPoint("start/point");
-        request.setDepth(-1);
-        request.setMaxFiles(10);
-        request.setModel("test-model");
-
-        Set<ConstraintViolation<AnalysisRequest>> violations = validator.validate(request);
-
-        assertEquals(1, violations.size());
-        ConstraintViolation<AnalysisRequest> violation = violations.iterator().next();
-        assertEquals("Depth must be greater than 0", violation.getMessage());
-    }
-
-    @Test
-    public void testInvalidAnalysisRequest_NullMaxFiles() {
-        AnalysisRequest request = new AnalysisRequest();
-        request.setStartingPoint("start/point");
-        request.setDepth(5);
-        request.setMaxFiles(null);
-        request.setModel("test-model");
-
-        Set<ConstraintViolation<AnalysisRequest>> violations = validator.validate(request);
-
-        assertEquals(1, violations.size());
-        ConstraintViolation<AnalysisRequest> violation = violations.iterator().next();
-        assertEquals("Max files must not be null", violation.getMessage());
-    }
-
-    @Test
-    public void testInvalidAnalysisRequest_NegativeMaxFiles() {
-        AnalysisRequest request = new AnalysisRequest();
-        request.setStartingPoint("start/point");
-        request.setDepth(5);
-        request.setMaxFiles(-1);
-        request.setModel("test-model");
-
-        Set<ConstraintViolation<AnalysisRequest>> violations = validator.validate(request);
-
-        assertEquals(1, violations.size());
-        ConstraintViolation<AnalysisRequest> violation = violations.iterator().next();
-        assertEquals("Max files must be greater than 0", violation.getMessage());
-    }
-
-    @Test
-    public void testInvalidAnalysisRequest_BlankModel() {
-        AnalysisRequest request = new AnalysisRequest();
-        request.setStartingPoint("start/point");
-        request.setDepth(5);
-        request.setMaxFiles(10);
-        request.setModel("");
-
-        Set<ConstraintViolation<AnalysisRequest>> violations = validator.validate(request);
-
-        assertEquals(1, violations.size());
-        ConstraintViolation<AnalysisRequest> violation = violations.iterator().next();
-        assertEquals("Model must not be blank", violation.getMessage());
+        assertEquals("Timestamp must follow ISO 8601 (YYYY-MM-DDThh:mm:ssTZD) format", violation.getMessage());
     }
 }

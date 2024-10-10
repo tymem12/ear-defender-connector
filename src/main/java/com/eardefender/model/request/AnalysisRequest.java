@@ -1,24 +1,19 @@
 package com.eardefender.model.request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import com.eardefender.model.InputParams;
+import com.eardefender.model.PredictionResult;
+import com.eardefender.validation.Status;
+import com.eardefender.validation.Timestamp;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class AnalysisRequest {
-
-    @NotBlank(message = "Starting point must not be blank")
-    private String startingPoint;
-
-    @NotNull(message = "Depth must not be null")
-    @Positive(message = "Depth must be greater than 0")
-    private Integer depth;
-
-    @NotNull(message = "Max files must not be null")
-    @Positive(message = "Max files must be greater than 0")
-    private Integer maxFiles;
-
-    @NotBlank(message = "Model must not be blank")
-    private String model;
+    @Status(message = "Status must be one of the following: DOWNLOADING, PROCESSING, FINISHED")
+    private String status;
+    @Timestamp(message = "Timestamp must follow ISO 8601 (YYYY-MM-DDThh:mm:ssTZD) format")
+    private String finishTimestamp;
+    private InputParams inputParams;
+    private List<PredictionResult> predictionResults;
 }
