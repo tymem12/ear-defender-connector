@@ -25,7 +25,7 @@ public class AnalysisMapper {
         }
 
         if (analysis.getPredictionResults() != null) {
-            response.setPredictions(analysis.getPredictionResults().stream().map(PredictionResult::clone).toList());
+            response.setPredictionResults(analysis.getPredictionResults().stream().map(PredictionResult::clone).toList());
         }
 
         return response;

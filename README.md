@@ -1,4 +1,6 @@
 # EarDefender_connector
-connector
 
-visit http://localhost:8080/v2/api-docs for swagger docs
+## Documentation
+
+After launching application visit this URL for documentation:
+http://localhost:8080/swagger-ui/index.html
