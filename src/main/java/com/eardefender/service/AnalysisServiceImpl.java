@@ -46,7 +46,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     }
 
     @Override
-    public Analysis getById(String id) {
+    public Analysis getById(String id) throws AnalysisNotFoundException {
         return analysisRepository
                 .findById(id)
                 .orElseThrow(() -> new AnalysisNotFoundException(id));
@@ -58,7 +58,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     }
 
     @Override
-    public Analysis update(String id, AnalysisRequest analysisRequest) {
+    public Analysis update(String id, AnalysisRequest analysisRequest) throws AnalysisNotFoundException {
         Analysis analysis = analysisRepository.findById(id).orElseThrow(() -> new AnalysisNotFoundException(id));
         Analysis updatedAnalysis = AnalysisMapper.updateFromRequest(analysis, analysisRequest);
         analysisRepository.save(updatedAnalysis);
@@ -66,12 +66,12 @@ public class AnalysisServiceImpl implements AnalysisService {
     }
 
     @Override
-    public void deleteById(String id) {
+    public void deleteById(String id) throws AnalysisNotFoundException {
          analysisRepository.deleteById(id);
     }
 
     @Override
-    public Analysis addPredictionResults(String id, AddPredictionsRequest addPredictionsRequest) {
+    public Analysis addPredictionResults(String id, AddPredictionsRequest addPredictionsRequest) throws AnalysisNotFoundException {
         Analysis analysis = analysisRepository.findById(id).orElseThrow(() -> new AnalysisNotFoundException(id));
 
         List<PredictionResult> newList = new ArrayList<>();
