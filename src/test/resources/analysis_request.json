@@ -1,0 +1,42 @@
+{
+  "inputParams": {
+    "startingPoint": "example-url",
+    "depth": 3,
+    "maxFiles": 100,
+    "model": "example-model1"
+  },
+  "status": "PROCESSING",
+  "finishTimestamp": "1997-07-16T20:20:40+01:00",
+  "predictionResults":[
+    {
+      "link": "example-url1",
+      "model": "example-model",
+      "timestamp": "1991-07-16T20:20:40+01:00",
+      "modelPredictions":[
+        {
+          "segmentNumber":0,
+          "label":0
+        },
+        {
+          "segmentNumber":1,
+          "label":1
+        }
+      ]
+    },
+    {
+      "link": "example-url2",
+      "model": "example-model",
+      "timestamp": "1990-07-16T20:20:40+01:00",
+      "modelPredictions":[
+        {
+          "segmentNumber":0,
+          "label":1
+        },
+        {
+          "segmentNumber":1,
+          "label":0
+        }
+      ]
+    }
+  ]
+}

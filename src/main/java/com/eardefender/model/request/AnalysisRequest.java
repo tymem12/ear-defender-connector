@@ -1,24 +1,31 @@
 package com.eardefender.model.request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import com.eardefender.model.InputParams;
+import com.eardefender.model.PredictionResult;
+import com.eardefender.validation.Status;
+import com.eardefender.validation.Timestamp;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.util.List;
+
+@Schema(description = "Request model for updating or creating an analysis")
 @Data
 public class AnalysisRequest {
 
-    @NotBlank(message = "Starting point must not be blank")
-    private String startingPoint;
+    @Schema(description = "Current status of the analysis. Must be one of the following: DOWNLOADING, PROCESSING, FINISHED",
+            example = "FINISHED")
+    @Status(message = "Status must be one of the following: DOWNLOADING, PROCESSING, FINISHED")
+    private String status;
 
-    @NotNull(message = "Depth must not be null")
-    @Positive(message = "Depth must be greater than 0")
-    private Integer depth;
+    @Schema(description = "Timestamp indicating when the analysis finished, must follow ISO 8601 format (YYYY-MM-DDThh:mm:ssTZD)",
+            example = "2024-10-10T14:30:00Z")
+    @Timestamp(message = "Timestamp must follow ISO 8601 (YYYY-MM-DDThh:mm:ssTZD) format")
+    private String finishTimestamp;
 
-    @NotNull(message = "Max files must not be null")
-    @Positive(message = "Max files must be greater than 0")
-    private Integer maxFiles;
+    @Schema(description = "Input parameters used for the analysis")
+    private InputParams inputParams;
 
-    @NotBlank(message = "Model must not be blank")
-    private String model;
+    @Schema(description = "List of prediction results associated with the analysis")
+    private List<PredictionResult> predictionResults;
 }

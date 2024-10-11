@@ -1,12 +1,20 @@
 package com.eardefender.service;
 
+import com.eardefender.exception.AnalysisNotFoundException;
+import com.eardefender.mapper.AnalysisMapper;
 import com.eardefender.model.Analysis;
+import com.eardefender.model.InputParams;
+import com.eardefender.model.PredictionResult;
+import com.eardefender.model.request.AddPredictionsRequest;
 import com.eardefender.model.request.AnalysisRequest;
+import com.eardefender.model.request.BeginAnalysisRequest;
 import com.eardefender.repository.AnalysisRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.eardefender.constants.EarDefenderConstants.STATUS_DOWNLOADING;
 
@@ -19,7 +27,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     }
 
     @Override
-    public void beginAnalysis(AnalysisRequest request) {
+    public void beginAnalysis(BeginAnalysisRequest request) {
         Analysis analysis = new Analysis();
 
         String timestamp = OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
@@ -27,7 +35,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         analysis.setStatus(STATUS_DOWNLOADING);
 
-        Analysis.InputParams inputParams = new Analysis.InputParams();
+        InputParams inputParams = new InputParams();
         inputParams.setDepth(request.getDepth());
         inputParams.setModel(request.getModel());
         inputParams.setMaxFiles(request.getMaxFiles());
@@ -35,5 +43,45 @@ public class AnalysisServiceImpl implements AnalysisService {
         analysis.setInputParams(inputParams);
 
         analysisRepository.save(analysis);
+    }
+
+    @Override
+    public Analysis getById(String id) throws AnalysisNotFoundException {
+        return analysisRepository
+                .findById(id)
+                .orElseThrow(() -> new AnalysisNotFoundException(id));
+    }
+
+    @Override
+    public List<Analysis> getAll() {
+        return analysisRepository.findAll();
+    }
+
+    @Override
+    public Analysis update(String id, AnalysisRequest analysisRequest) throws AnalysisNotFoundException {
+        Analysis analysis = analysisRepository.findById(id).orElseThrow(() -> new AnalysisNotFoundException(id));
+        Analysis updatedAnalysis = AnalysisMapper.updateFromRequest(analysis, analysisRequest);
+        analysisRepository.save(updatedAnalysis);
+        return updatedAnalysis;
+    }
+
+    @Override
+    public void deleteById(String id) throws AnalysisNotFoundException {
+         analysisRepository.deleteById(id);
+    }
+
+    @Override
+    public Analysis addPredictionResults(String id, AddPredictionsRequest addPredictionsRequest) throws AnalysisNotFoundException {
+        Analysis analysis = analysisRepository.findById(id).orElseThrow(() -> new AnalysisNotFoundException(id));
+
+        List<PredictionResult> newList = new ArrayList<>();
+        newList.addAll(analysis.getPredictionResults());
+        newList.addAll(addPredictionsRequest.getPredictionResults());
+
+        analysis.setPredictionResults(newList);
+
+        analysisRepository.save(analysis);
+
+        return analysis;
     }
 }
