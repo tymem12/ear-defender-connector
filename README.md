@@ -23,3 +23,7 @@ Run `docker-compose up` command to launch mongo container
 - `docker stop <container_id>` - Stop a running container
 - `docker rm <container_id>` - Remove stopped container
 - `docker exec -it <container_id> /bin/bash` - Open interactive shell of a container
+
+## JaCoCo
+
+To generate JaCoCo report run `mvn clean test` and go to `target/site/jacoco/index.html`
