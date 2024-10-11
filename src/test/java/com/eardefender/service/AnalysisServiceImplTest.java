@@ -99,14 +99,14 @@ class AnalysisServiceImplTest {
     }
 
     @Test
-    void deleteById_DeletesAnalysis() {
+    void deleteById_AnalysisInRepository_DeletesAnalysis() {
         analysisService.deleteById(analysisModel.getId());
 
         verify(analysisRepository, times(1)).deleteById(analysisModel.getId());
     }
 
     @Test
-    void update_AnalysisIsUpdated() {
+    void update_AnalysisInRepository_AnalysisIsUpdated() {
         when(analysisRepository.findById(anyString())).thenReturn(Optional.of(analysisModel));
 
         Analysis result = analysisService.update(analysisModel.getId(), analysisRequest);
@@ -121,7 +121,14 @@ class AnalysisServiceImplTest {
     }
 
     @Test
-    void addPredictions_AddsPredictions() {
+    void update_AnalysisNotInRepository_ThrowsException() {
+        when(analysisRepository.findById(anyString())).thenReturn(Optional.empty());
+
+        assertThrows(AnalysisNotFoundException.class, () -> analysisService.update(analysisModel.getId(), analysisRequest));
+    }
+
+    @Test
+    void addPredictions_AnalysisInRepository_AddsPredictions() {
         when(analysisRepository.findById(anyString())).thenReturn(Optional.of(analysisModel));
 
         Analysis result = analysisService.addPredictionResults(analysisModel.getId(), addPredictionsRequest);
@@ -130,6 +137,13 @@ class AnalysisServiceImplTest {
         assertTrue(result.getPredictionResults().containsAll(addPredictionsRequest.getPredictionResults()));
 
         verify(analysisRepository, times(1)).save(any());
+    }
+
+    @Test
+    void addPredictions_AnalysisNotInRepository_ThrowsException() {
+        when(analysisRepository.findById(anyString())).thenReturn(Optional.empty());
+
+        assertThrows(AnalysisNotFoundException.class, () -> analysisService.addPredictionResults(analysisModel.getId(), addPredictionsRequest));
     }
 
     private void setUpModel() throws IOException {

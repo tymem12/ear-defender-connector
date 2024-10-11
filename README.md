@@ -26,4 +26,6 @@ Run `docker-compose up` command to launch mongo container
 
 ## JaCoCo
 
-To generate JaCoCo report run `mvn clean test` and go to `target/site/jacoco/index.html`
+To generate JaCoCo report run `mvn clean test`
+
+Then go to [`target/site/jacoco/index.html`](target/site/jacoco/index.html)
