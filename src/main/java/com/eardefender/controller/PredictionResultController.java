@@ -2,6 +2,7 @@ package com.eardefender.controller;
 
 import com.eardefender.mapper.PredictionResultMapper;
 import com.eardefender.model.PredictionResult;
+import com.eardefender.model.request.GetPredictionsRequest;
 import com.eardefender.model.request.PredictionResultRequest;
 import com.eardefender.model.response.PredictionResultResponse;
 import com.eardefender.service.PredictionResultService;
@@ -39,21 +40,6 @@ public class PredictionResultController {
         return ResponseEntity.status(HttpStatus.OK).body(predictionResultResponses);
     }
 
-    @Operation(summary = "Get prediction result by model and link",
-            description = "Returns a specific prediction result based on the provided model and link.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Prediction result found"),
-            @ApiResponse(responseCode = "404", description = "Prediction result not found", content = @Content)
-    })
-    @GetMapping("/model/{model}/link/{link}")
-    public ResponseEntity<PredictionResultResponse> getByModelAndLink(
-            @Parameter(description = "Model of the prediction result", required = true) @PathVariable String model,
-            @Parameter(description = "Link of the prediction result", required = true) @PathVariable String link) {
-        PredictionResult predictionResult = predictionResultService.findByLinkAndModel(link, model);
-        PredictionResultResponse predictionResultResponse = PredictionResultMapper.toResponse(predictionResult);
-        return ResponseEntity.status(HttpStatus.OK).body(predictionResultResponse);
-    }
-
     @Operation(summary = "Get prediction results by model and links",
             description = "Returns prediction results based on the provided model and list of links.")
     @ApiResponses(value = {
@@ -63,8 +49,8 @@ public class PredictionResultController {
     @GetMapping("/model/{model}")
     public ResponseEntity<List<PredictionResultResponse>> getByModelAndLinks(
             @Parameter(description = "Model of the prediction results", required = true) @PathVariable String model,
-            @Parameter(description = "List of prediction result links", required = true) @RequestBody List<String> links) {
-        List<PredictionResult> predictionResults = predictionResultService.findByLinksAndModel(links, model);
+            @Parameter(description = "List of prediction result links", required = true) @RequestBody GetPredictionsRequest getPredictionsRequest) {
+        List<PredictionResult> predictionResults = predictionResultService.findByLinksAndModel(getPredictionsRequest.getLinks(), model);
         List<PredictionResultResponse> predictionResultResponses = predictionResults.stream().map(PredictionResultMapper::toResponse).toList();
         return ResponseEntity.status(HttpStatus.OK).body(predictionResultResponses);
     }

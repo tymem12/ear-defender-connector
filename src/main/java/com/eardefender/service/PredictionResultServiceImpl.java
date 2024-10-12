@@ -47,11 +47,6 @@ public class PredictionResultServiceImpl implements PredictionResultService {
     }
 
     @Override
-    public PredictionResult findByLinkAndModel(String link, String model) {
-        return predictionResultRepository.findByLinkAndModel(link, model).orElseThrow(() -> new PredictionResultNotFoundException(link, model));
-    }
-
-    @Override
     public PredictionResult create(PredictionResult predictionResult) {
         return predictionResultRepository.save(predictionResult);
     }
