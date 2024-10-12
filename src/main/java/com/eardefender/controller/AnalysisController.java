@@ -9,6 +9,7 @@ import com.eardefender.model.response.AnalysisResponse;
 import com.eardefender.service.AnalysisService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -34,7 +35,7 @@ public class AnalysisController {
             description = "Returns the analysis details for the provided analysis ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Analysis found"),
-            @ApiResponse(responseCode = "404", description = "Analysis not found")
+            @ApiResponse(responseCode = "404", description = "Analysis not found", content = @Content)
     })
     @GetMapping("/{id}")
     public ResponseEntity<AnalysisResponse> getById(@Parameter(description = "ID of the analysis to be retrieved", required = true) @PathVariable String id) {
@@ -60,8 +61,8 @@ public class AnalysisController {
             description = "Updates the details of the analysis specified by the ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Analysis updated successfully"),
-            @ApiResponse(responseCode = "404", description = "Analysis not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data")
+            @ApiResponse(responseCode = "404", description = "Analysis not found", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content)
     })
     @PutMapping("/{id}")
     public ResponseEntity<AnalysisResponse> update(
@@ -75,7 +76,7 @@ public class AnalysisController {
             description = "Deletes the analysis specified by the ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Analysis deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Analysis not found")
+            @ApiResponse(responseCode = "404", description = "Analysis not found", content = @Content)
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@Parameter(description = "ID of the analysis to be deleted", required = true) @PathVariable String id) {
@@ -87,8 +88,8 @@ public class AnalysisController {
             description = "Adds prediction results to the analysis specified by the ID. It doesn't override existing prediction results.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Predictions added successfully"),
-            @ApiResponse(responseCode = "404", description = "Analysis not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data")
+            @ApiResponse(responseCode = "404", description = "Analysis not found", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content)
     })
     @PutMapping("/{id}/predictions")
     public ResponseEntity<Void> addPredictions(
