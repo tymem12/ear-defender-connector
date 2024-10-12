@@ -35,7 +35,9 @@ public class PredictionResult implements Cloneable {
     public PredictionResult clone() {
         try {
             PredictionResult clone = (PredictionResult) super.clone();
-            clone.setModelPredictions(modelPredictions.stream().map(SegmentPrediction::clone).toList());
+            if (modelPredictions != null) {
+                clone.setModelPredictions(modelPredictions.stream().map(SegmentPrediction::clone).toList());
+            }
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
