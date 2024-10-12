@@ -26,6 +26,8 @@ import static org.mockito.Mockito.*;
 class AnalysisServiceImplTest {
     @Mock
     private AnalysisRepository analysisRepository;
+    @Mock
+    private ScraperService scraperService;
 
     @InjectMocks
     private AnalysisServiceImpl analysisService;
@@ -46,7 +48,9 @@ class AnalysisServiceImplTest {
     }
 
     @Test
-    void beginAnalysis_SavesAnalysisToRepository() {
+    void beginAnalysis_SavesAnalysisAndCallsModelService() {
+        doNothing().when(scraperService).beginScraping(any());
+
         analysisService.beginAnalysis(beginAnalysisRequest);
 
         ArgumentCaptor<Analysis> analysisCaptor = ArgumentCaptor.forClass(Analysis.class);
@@ -61,6 +65,8 @@ class AnalysisServiceImplTest {
 
         assertEquals(STATUS_DOWNLOADING, capturedAnalysis.getStatus());
         assertNotNull(capturedAnalysis.getTimestamp());
+
+        verify(scraperService, times(1)).beginScraping(any());
     }
 
     @Test

@@ -1,6 +1,5 @@
 package com.eardefender.service;
 
-import com.eardefender.exception.PredictionResultNotFoundException;
 import com.eardefender.model.PredictionResult;
 import com.eardefender.model.request.PredictionResultRequest;
 import com.eardefender.repository.PredictionResultRepository;
@@ -14,7 +13,6 @@ import org.mockito.MockitoAnnotations;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -97,25 +95,6 @@ class PredictionResultServiceImplTest {
         assertEquals(1, predictionResults.size());
 
         verify(predictionResultRepository, times(1)).findByLinkInAndModel(List.of(predictionResult.getLink()), predictionResult.getModel());
-    }
-
-    @Test
-    void findByLinkAndModel_PredictionResultInRepository_ReturnsPredictionResult() {
-        when(predictionResultRepository.findByLinkAndModel(anyString(), anyString())).thenReturn(Optional.of(predictionResult));
-
-        PredictionResult result = predictionResultService.findByLinkAndModel(predictionResult.getLink(), predictionResult.getModel());
-
-        assertNotNull(result);
-        assertEquals(predictionResult, result);
-
-        verify(predictionResultRepository, times(1)).findByLinkAndModel(predictionResult.getLink(), predictionResult.getModel());
-    }
-
-    @Test
-    void findByLinkAndModel_PredictionResultNotInRepository_ReturnsPredictionResult() {
-        when(predictionResultRepository.findByLinkAndModel(anyString(), anyString())).thenReturn(Optional.empty());
-
-        assertThrows(PredictionResultNotFoundException.class, () -> predictionResultService.findByLinkAndModel(predictionResult.getLink(), predictionResult.getModel()));
     }
 
     @Test
