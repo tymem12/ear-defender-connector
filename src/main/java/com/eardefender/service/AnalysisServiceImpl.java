@@ -8,6 +8,7 @@ import com.eardefender.model.PredictionResult;
 import com.eardefender.model.request.AddPredictionsRequest;
 import com.eardefender.model.request.AnalysisRequest;
 import com.eardefender.model.request.BeginAnalysisRequest;
+import com.eardefender.model.request.BeginScrapingRequest;
 import com.eardefender.repository.AnalysisRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +22,11 @@ import static com.eardefender.constants.EarDefenderConstants.STATUS_DOWNLOADING;
 @Service
 public class AnalysisServiceImpl implements AnalysisService {
     private final AnalysisRepository analysisRepository;
+    private final ScraperService scraperService;
 
-    public AnalysisServiceImpl(AnalysisRepository analysisRepository) {
+    public AnalysisServiceImpl(AnalysisRepository analysisRepository, ScraperService scraperService) {
         this.analysisRepository = analysisRepository;
+        this.scraperService = scraperService;
     }
 
     @Override
@@ -43,6 +46,12 @@ public class AnalysisServiceImpl implements AnalysisService {
         analysis.setInputParams(inputParams);
 
         analysisRepository.save(analysis);
+
+        BeginScrapingRequest beginScrapingRequest = new BeginScrapingRequest();
+        beginScrapingRequest.setAnalysisId(analysis.getId());
+        beginScrapingRequest.setInputParams(analysis.getInputParams().clone());
+
+        scraperService.beginScraping(beginScrapingRequest);
     }
 
     @Override
