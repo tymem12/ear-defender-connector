@@ -1,4 +1,4 @@
-package com.eardefender.exception;
+package com.eardefender.exception.handler;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

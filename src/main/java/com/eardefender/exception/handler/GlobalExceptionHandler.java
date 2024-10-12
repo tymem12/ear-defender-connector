@@ -1,5 +1,7 @@
-package com.eardefender.exception;
+package com.eardefender.exception.handler;
 
+import com.eardefender.exception.AnalysisNotFoundException;
+import com.eardefender.exception.PredictionResultNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,9 +30,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AnalysisNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFoundException(AnalysisNotFoundException ex) {
+    @ExceptionHandler({AnalysisNotFoundException.class, PredictionResultNotFoundException.class})
+    public ResponseEntity<ErrorResponse> handleNotFoundException(RuntimeException ex) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), new ArrayList<>());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleUnknownException(Exception ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error", new ArrayList<>());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

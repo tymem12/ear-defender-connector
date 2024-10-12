@@ -21,7 +21,7 @@ public class AnalysisMapper {
         response.setFileCount(analysis.getFileCount());
 
         if(analysis.getInputParams() != null) {
-            response.setInputParams(response.getInputParams().clone());
+            response.setInputParams(analysis.getInputParams().clone());
         }
 
         if (analysis.getPredictionResults() != null) {

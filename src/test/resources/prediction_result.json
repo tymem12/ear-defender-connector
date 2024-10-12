@@ -1,0 +1,11 @@
+{
+  "link": "https://example.com/prediction",
+  "timestamp": "2024-10-10T14:30:00Z",
+  "model": "example-model",
+  "modelPredictions": [
+    {
+      "segmentNumber": 0,
+      "label": 1
+    }
+  ]
+}
