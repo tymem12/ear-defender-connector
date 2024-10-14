@@ -85,7 +85,7 @@ public class AnalysisController {
     }
 
     @Operation(summary = "Add predictions to an analysis",
-            description = "Adds prediction results to the analysis specified by the ID. It doesn't override existing prediction results.")
+            description = "Adds prediction results to the analysis specified by the ID. It doesn't override existing prediction results. Also saves predictions to prediction collection.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Predictions added successfully"),
             @ApiResponse(responseCode = "404", description = "Analysis not found", content = @Content),
