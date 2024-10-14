@@ -10,6 +10,7 @@ import com.eardefender.model.request.AnalysisRequest;
 import com.eardefender.model.request.BeginAnalysisRequest;
 import com.eardefender.model.request.BeginScrapingRequest;
 import com.eardefender.repository.AnalysisRepository;
+import com.eardefender.repository.PredictionResultRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -22,10 +23,12 @@ import static com.eardefender.constants.EarDefenderConstants.STATUS_DOWNLOADING;
 @Service
 public class AnalysisServiceImpl implements AnalysisService {
     private final AnalysisRepository analysisRepository;
+    private final PredictionResultRepository predictionResultRepository;
     private final ScraperService scraperService;
 
-    public AnalysisServiceImpl(AnalysisRepository analysisRepository, ScraperService scraperService) {
+    public AnalysisServiceImpl(AnalysisRepository analysisRepository, PredictionResultRepository predictionResultRepository, ScraperService scraperService) {
         this.analysisRepository = analysisRepository;
+        this.predictionResultRepository = predictionResultRepository;
         this.scraperService = scraperService;
     }
 
@@ -88,6 +91,8 @@ public class AnalysisServiceImpl implements AnalysisService {
         newList.addAll(addPredictionsRequest.getPredictionResults());
 
         analysis.setPredictionResults(newList);
+
+        predictionResultRepository.saveAll(newList);
 
         analysisRepository.save(analysis);
 

@@ -1,10 +1,4 @@
 {
-  "inputParams": {
-    "startingPoint": "example-url",
-    "depth": 3,
-    "maxFiles": 100,
-    "model": "example-model1"
-  },
   "status": "PROCESSING",
   "finishTimestamp": "1997-07-16T20:20:40+01:00",
   "predictionResults":[

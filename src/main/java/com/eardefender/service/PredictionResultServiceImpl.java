@@ -1,6 +1,5 @@
 package com.eardefender.service;
 
-import com.eardefender.exception.PredictionResultNotFoundException;
 import com.eardefender.model.PredictionResult;
 import com.eardefender.repository.PredictionResultRepository;
 import org.springframework.stereotype.Service;

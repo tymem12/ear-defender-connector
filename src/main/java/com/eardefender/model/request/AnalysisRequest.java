@@ -1,6 +1,5 @@
 package com.eardefender.model.request;
 
-import com.eardefender.model.InputParams;
 import com.eardefender.model.PredictionResult;
 import com.eardefender.validation.Status;
 import com.eardefender.validation.Timestamp;
@@ -22,9 +21,6 @@ public class AnalysisRequest {
             example = "2024-10-10T14:30:00Z")
     @Timestamp(message = "Timestamp must follow ISO 8601 (YYYY-MM-DDThh:mm:ssTZD) format")
     private String finishTimestamp;
-
-    @Schema(description = "Input parameters used for the analysis")
-    private InputParams inputParams;
 
     @Schema(description = "List of prediction results associated with the analysis")
     private List<PredictionResult> predictionResults;

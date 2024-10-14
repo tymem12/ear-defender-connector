@@ -36,7 +36,6 @@ public class AnalysisRequestTest {
         request.setStatus("PROCESSING");
         request.setFinishTimestamp("2005-07-16T19:20:40+01:00");
         request.setPredictionResults(List.of());
-        request.setInputParams(inputParams);
     }
 
     @Test
