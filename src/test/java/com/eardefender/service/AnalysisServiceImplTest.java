@@ -117,7 +117,6 @@ class AnalysisServiceImplTest {
 
         Analysis result = analysisService.update(analysisModel.getId(), analysisRequest);
 
-        assertEquals(analysisRequest.getInputParams(), result.getInputParams());
         assertEquals(analysisRequest.getStatus(), result.getStatus());
         assertEquals(analysisRequest.getPredictionResults(), result.getPredictionResults());
         assertTrue(result.getDuration() > 0);

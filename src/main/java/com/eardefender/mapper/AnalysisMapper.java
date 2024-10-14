@@ -42,10 +42,6 @@ public class AnalysisMapper {
             analysis.setDuration(seconds);
         }
 
-        if(analysisRequest.getInputParams() != null) {
-            analysis.setInputParams(analysisRequest.getInputParams().clone());
-        }
-
         if (analysisRequest.getPredictionResults() != null) {
             analysis.setPredictionResults(analysisRequest.getPredictionResults().stream().map(PredictionResult::clone).toList());
             analysis.setFileCount(analysisRequest.getPredictionResults().size());
