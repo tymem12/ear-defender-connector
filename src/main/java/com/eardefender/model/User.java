@@ -1,5 +1,6 @@
-package com.eardefender.security;
+package com.eardefender.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+@Schema(description = "Model representing user in the system")
 @Data
 @Builder
 @NoArgsConstructor
@@ -21,17 +23,25 @@ import java.util.List;
 @Table(name = "users")
 @Entity
 public class User implements UserDetails {
+    @Schema(description = "Unique identifier for the user",
+            example = "672186ac88ae2644b67de303")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private String id;
 
+    @Schema(description = "Full name of the user",
+            example = "John Doe")
     @Column(nullable = false)
     private String fullName;
 
+    @Schema(description = "Unique email of the user",
+            example = "Example@example.com")
     @Column(unique = true, length = 100, nullable = false)
     private String email;
 
+    @Schema(description = "Hashed password of the user",
+            example = "$2a$10$3h6b4bYhTC7wR/k98xNjnuowOIlRTlgyK.f/ca5RiLhin461Y9m4q")
     @Column(nullable = false)
     private String password;
 

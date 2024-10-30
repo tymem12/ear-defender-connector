@@ -1,19 +1,22 @@
-package com.eardefender.security;
+package com.eardefender.service;
 
+import com.eardefender.model.User;
+import com.eardefender.model.request.CredentialsRequest;
+import com.eardefender.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthenticationService {
+public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
 
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationService(
+    public AuthenticationServiceImpl(
             UserRepository userRepository,
             AuthenticationManager authenticationManager,
             PasswordEncoder passwordEncoder
@@ -23,9 +26,10 @@ public class AuthenticationService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User signup(RegisterUserDto input) {
+    @Override
+    public User signup(CredentialsRequest input) {
         User user = User.builder()
-                .fullName(input.getFullName())
+                .fullName(input.getEmail())
                 .email(input.getEmail())
                 .password(passwordEncoder.encode(input.getPassword()))
                 .build();
@@ -33,7 +37,8 @@ public class AuthenticationService {
         return userRepository.save(user);
     }
 
-    public User authenticate(LoginUserDto input) {
+    @Override
+    public User authenticate(CredentialsRequest input) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         input.getEmail(),

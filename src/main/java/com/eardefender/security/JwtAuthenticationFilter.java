@@ -1,5 +1,6 @@
 package com.eardefender.security;
 
+import com.eardefender.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
