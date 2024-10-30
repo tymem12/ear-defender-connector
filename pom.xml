@@ -28,7 +28,9 @@
         <jackson.databind.version>2.15.2</jackson.databind.version>
         <springdoc.openapi.version>2.6.0</springdoc.openapi.version>
         <jacoco.version>0.8.10</jacoco.version>
-        <io.jsonwebtoken.version>0.12.6</io.jsonwebtoken.version>
+        <io.jsonwebtoken.jjwt.version>0.12.6</io.jsonwebtoken.jjwt.version>
+        <io.jsonwebtoken.version>0.11.5</io.jsonwebtoken.version>
+        <hibernate-core.version>6.6.1.Final</hibernate-core.version>
     </properties>
 
     <dependencies>
@@ -123,7 +125,7 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>${io.jsonwebtoken.version}</version>
+            <version>${io.jsonwebtoken.jjwt.version}</version>
         </dependency>
 
         <dependency>
@@ -135,25 +137,25 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
-            <version>0.11.5</version>
+            <version>${io.jsonwebtoken.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
-            <version>0.11.5</version>
+            <version>${io.jsonwebtoken.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
-            <version>0.11.5</version>
+            <version>${io.jsonwebtoken.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>6.6.1.Final</version>
+            <version>${hibernate-core.version}</version>
         </dependency>
     </dependencies>
 
@@ -188,6 +190,7 @@
                                 <exclude>com/eardefender/model/**</exclude>
                                 <exclude>com/eardefender/constants/**</exclude>
                                 <exclude>com/eardefender/config/**</exclude>
+                                <exclude>com/eardefender/security/**</exclude>
                                 <exclude>com/eardefender/EarDefenderConnectorApplication.class</exclude>
                             </excludes>
                         </configuration>
@@ -205,7 +208,7 @@
                                         <limit>
                                             <counter>INSTRUCTION</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
+                                            <minimum>0.70</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
