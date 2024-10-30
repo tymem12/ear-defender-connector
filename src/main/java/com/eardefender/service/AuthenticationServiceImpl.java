@@ -1,10 +1,12 @@
 package com.eardefender.service;
 
+import com.eardefender.exception.UserAlreadyExistException;
 import com.eardefender.model.User;
 import com.eardefender.model.request.CredentialsRequest;
 import com.eardefender.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public User signup(CredentialsRequest input) {
+        userRepository.findByEmail(input.getEmail())
+                .ifPresent(u -> {throw new UserAlreadyExistException(u.getUsername());});
+
         User user = User.builder()
                 .fullName(input.getEmail())
                 .email(input.getEmail())
@@ -47,6 +52,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         );
 
         return userRepository.findByEmail(input.getEmail())
-                .orElseThrow();
+                .orElseThrow(() -> new UsernameNotFoundException(input.getEmail()));
     }
 }

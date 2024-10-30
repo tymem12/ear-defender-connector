@@ -2,6 +2,8 @@ package com.eardefender.exception.handler;
 
 import com.eardefender.exception.AnalysisNotFoundException;
 import com.eardefender.exception.PredictionResultNotFoundException;
+import com.eardefender.exception.UserAlreadyExistException;
+import com.eardefender.exception.UserNotFoundException;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.security.auth.login.AccountNotFoundException;
 import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({AnalysisNotFoundException.class, PredictionResultNotFoundException.class})
+    @ExceptionHandler({AnalysisNotFoundException.class, PredictionResultNotFoundException.class, UserNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleNotFoundException(RuntimeException ex) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), new ArrayList<>());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
@@ -56,6 +57,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleForbiddenException(RuntimeException ex) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN.value(), ex.getMessage(), new ArrayList<>());
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler({
+            UserAlreadyExistException.class})
+    public ResponseEntity<ErrorResponse> handleConflictException(RuntimeException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), new ArrayList<>());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(Exception.class)
