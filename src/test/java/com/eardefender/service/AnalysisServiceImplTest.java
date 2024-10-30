@@ -6,6 +6,7 @@ import com.eardefender.model.request.AddPredictionsRequest;
 import com.eardefender.model.request.AnalysisRequest;
 import com.eardefender.model.request.BeginAnalysisRequest;
 import com.eardefender.repository.AnalysisRepository;
+import com.eardefender.repository.PredictionResultRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,8 @@ import static org.mockito.Mockito.*;
 class AnalysisServiceImplTest {
     @Mock
     private AnalysisRepository analysisRepository;
+    @Mock
+    private PredictionResultRepository predictionResultRepository;
     @Mock
     private ScraperService scraperService;
 
@@ -135,6 +138,7 @@ class AnalysisServiceImplTest {
     @Test
     void addPredictions_AnalysisInRepository_AddsPredictions() {
         when(analysisRepository.findById(anyString())).thenReturn(Optional.of(analysisModel));
+        when(predictionResultRepository.saveAll(any())).thenReturn(List.of());
 
         Analysis result = analysisService.addPredictionResults(analysisModel.getId(), addPredictionsRequest);
 

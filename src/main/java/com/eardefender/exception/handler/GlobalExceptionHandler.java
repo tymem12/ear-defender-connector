@@ -2,12 +2,18 @@ package com.eardefender.exception.handler;
 
 import com.eardefender.exception.AnalysisNotFoundException;
 import com.eardefender.exception.PredictionResultNotFoundException;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AccountStatusException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.security.auth.login.AccountNotFoundException;
+import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -34,6 +40,22 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNotFoundException(RuntimeException ex) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), new ArrayList<>());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({BadCredentialsException.class})
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(RuntimeException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), new ArrayList<>());
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler({
+            AccountStatusException.class,
+            AccessDeniedException.class,
+            SignatureException.class,
+            ExpiredJwtException.class})
+    public ResponseEntity<ErrorResponse> handleForbiddenException(RuntimeException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN.value(), ex.getMessage(), new ArrayList<>());
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)
