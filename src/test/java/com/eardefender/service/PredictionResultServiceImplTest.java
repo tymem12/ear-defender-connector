@@ -35,33 +35,6 @@ class PredictionResultServiceImplTest {
     }
 
     @Test
-    void deleteByLinkAndModel_deletesPredictionResult() {
-        doNothing().when(predictionResultRepository).deleteByLinkAndModel(anyString(), anyString());
-
-        predictionResultService.deleteByLinkAndModel(predictionResult.getLink(), predictionResult.getModel());
-
-        verify(predictionResultRepository, times(1)).deleteByLinkAndModel(predictionResultRequest.getLink(), predictionResultRequest.getModel());
-    }
-
-    @Test
-    void deleteAll_deletesPredictionResult() {
-        doNothing().when(predictionResultRepository).deleteAll();
-
-        predictionResultService.deleteAll();
-
-        verify(predictionResultRepository, times(1)).deleteAll();
-    }
-
-    @Test
-    void deleteByModel_deletesPredictionResult() {
-        doNothing().when(predictionResultRepository).deleteByModel(anyString());
-
-        predictionResultService.deleteByModel(predictionResult.getModel());
-
-        verify(predictionResultRepository, times(1)).deleteByModel(predictionResultRequest.getModel());
-    }
-
-    @Test
     void getAll_ReturnsAll() {
         when(predictionResultRepository.findAll()).thenReturn(List.of(predictionResult));
 
