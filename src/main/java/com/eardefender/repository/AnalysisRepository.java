@@ -3,6 +3,8 @@ package com.eardefender.repository;
 import com.eardefender.model.Analysis;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface AnalysisRepository extends MongoRepository<Analysis, String> {
+import java.util.List;
 
+public interface AnalysisRepository extends MongoRepository<Analysis, String> {
+    List<Analysis> findAnalysisByOwner(String ownerId);
 }

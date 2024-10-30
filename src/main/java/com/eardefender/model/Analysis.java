@@ -37,4 +37,8 @@ public class Analysis {
 
     @Schema(description = "List of prediction results generated during the analysis")
     private List<PredictionResult> predictionResults;
+
+    @Schema(description = "Id of the analysis owner",
+            example = "672289c68139b90ca9d750c3")
+    private String owner;
 }

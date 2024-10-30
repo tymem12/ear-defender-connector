@@ -21,8 +21,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
-@Document(collection = "Analyses")
+@Document(collection = "Users")
 public class User implements UserDetails {
     @Schema(description = "Unique identifier for the user",
             example = "672186ac88ae2644b67de303")
