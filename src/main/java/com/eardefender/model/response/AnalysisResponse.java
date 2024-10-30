@@ -4,7 +4,6 @@ import com.eardefender.model.InputParams;
 import com.eardefender.model.PredictionResult;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
@@ -14,7 +13,6 @@ public class AnalysisResponse {
 
     @Schema(description = "Unique identifier for the analysis",
             example = "95a7ddce-4077-49f8-92a3-440842e04afe")
-    @Id
     private String id;
 
     @Schema(description = "Current status of the analysis",

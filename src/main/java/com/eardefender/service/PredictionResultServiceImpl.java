@@ -14,22 +14,6 @@ public class PredictionResultServiceImpl implements PredictionResultService {
         this.predictionResultRepository = predictionResultRepository;
     }
 
-
-    @Override
-    public void deleteByLinkAndModel(String link, String model) {
-        predictionResultRepository.deleteByLinkAndModel(link, model);
-    }
-
-    @Override
-    public void deleteAll() {
-        predictionResultRepository.deleteAll();
-    }
-
-    @Override
-    public void deleteByModel(String model) {
-        predictionResultRepository.deleteByModel(model);
-    }
-
     @Override
     public List<PredictionResult> getAll() {
         return predictionResultRepository.findAll();
