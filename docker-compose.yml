@@ -9,12 +9,10 @@ services:
       - "9090:8080"
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/ear_defender_database
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3307/authentication_db?serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD:
     depends_on:
       - mongo
-      - mysql
 
   mongo:
     image: mongo:latest
@@ -25,19 +23,5 @@ services:
     ports:
       - "27017:27017"
 
-  mysql:
-    image: mysql:latest
-    container_name: mysql
-    restart: always
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_ROOT_PASSWORD: ""
-      MYSQL_DATABASE: authentication_db
-    ports:
-      - "3307:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-
 volumes:
   mongo_data:
-  mysql_data:
