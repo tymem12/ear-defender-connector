@@ -29,6 +29,9 @@ public class BeginAnalysisRequestTest {
         request.setDepth(5);
         request.setMaxFiles(10);
         request.setModel("test-model");
+        request.setMaxPages(10);
+        request.setMaxTimePerFile(1000);
+        request.setMaxTotalTime(200);
     }
 
     @Test

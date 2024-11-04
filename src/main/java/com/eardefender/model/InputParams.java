@@ -24,7 +24,7 @@ public class InputParams implements Cloneable {
 
     @Schema(description = "The maximum number of pages to visit",
             example = "30")
-    private String maxPages;
+    private Integer maxPages;
 
     @Schema(description = "Time in seconds after which downloading singular file will be aborted",
             example = "300")
