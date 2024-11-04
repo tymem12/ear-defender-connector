@@ -13,6 +13,7 @@ import com.eardefender.model.request.BeginAnalysisRequest;
 import com.eardefender.model.request.BeginScrapingRequest;
 import com.eardefender.repository.AnalysisRepository;
 import com.eardefender.repository.PredictionResultRepository;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -24,12 +25,15 @@ import static com.eardefender.constants.EarDefenderConstants.STATUS_DOWNLOADING;
 
 @Service
 public class AnalysisServiceImpl implements AnalysisService {
+    private final Logger logger;
+
     private final AnalysisRepository analysisRepository;
     private final PredictionResultRepository predictionResultRepository;
     private final ScraperService scraperService;
     private final UserService userService;
 
-    public AnalysisServiceImpl(AnalysisRepository analysisRepository, PredictionResultRepository predictionResultRepository, ScraperService scraperService, UserService userService) {
+    public AnalysisServiceImpl(Logger logger, AnalysisRepository analysisRepository, PredictionResultRepository predictionResultRepository, ScraperService scraperService, UserService userService) {
+        this.logger = logger;
         this.analysisRepository = analysisRepository;
         this.predictionResultRepository = predictionResultRepository;
         this.scraperService = scraperService;
@@ -43,16 +47,24 @@ public class AnalysisServiceImpl implements AnalysisService {
         User owner = userService.getLoggedInUser();
         analysis.setOwner(owner.getId());
 
+        logger.info("Starting analysis for user: {}", owner.getEmail());
+
         String timestamp = OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         analysis.setTimestamp(timestamp);
 
         analysis.setStatus(STATUS_DOWNLOADING);
 
         InputParams inputParams = new InputParams();
-        inputParams.setDepth(request.getDepth());
+        inputParams.setMaxDepth(request.getDepth());
         inputParams.setModel(request.getModel());
         inputParams.setMaxFiles(request.getMaxFiles());
         inputParams.setStartingPoint(request.getStartingPoint());
+
+        inputParams.setMaxPages(request.getMaxPages());
+        inputParams.setMaxTimePerFile(request.getMaxTimePerFile());
+        inputParams.setMaxTotalTime(request.getMaxTotalTime());
+
+
         analysis.setInputParams(inputParams);
 
         analysisRepository.save(analysis);

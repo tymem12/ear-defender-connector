@@ -16,6 +16,10 @@ If run with docker-compose then: http://localhost:9090/swagger-ui/index.html
 - Build an image `docker build -t ear-defender-connector-app:latest .`
 - Run `docker-compose up` command to launch containers
 
+### Alternative
+- Run `mvn clean package`
+- Run `docker-compose up --build`
+
 ### Docker commands
 
 - `docker ps` - List running containers

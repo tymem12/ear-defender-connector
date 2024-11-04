@@ -15,5 +15,5 @@ public class StartProcessingRequest {
             example = "example-model")
     private String model;
     @Schema(description = "List paths to newly downloaded files", example = "[\"file1.mp3\", \"file2.mp3\", \"file3.mp3\"]")
-    private List<String> newFilePaths;
+    private List<String> filePaths;
 }

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +25,8 @@ class ScraperServiceImplTest {
     private AnalysisRepository analysisRepository;
     @Mock
     private ModelService modelService;
+    @Mock
+    private Logger logger;
 
     @InjectMocks
     private ScraperServiceImpl scraperService;

@@ -31,4 +31,19 @@ public class BeginAnalysisRequest {
             example = "example-model")
     @NotBlank(message = "Model must not be blank")
     private String model;
+
+    @Schema(description = "The maximum number of pages to visit",
+            example = "30")
+    @NotNull(message = "Max pages must not be null")
+    private Integer maxPages;
+
+    @Schema(description = "Time in seconds after which downloading singular file will be aborted",
+            example = "300")
+    @NotNull(message = "Max time per file must not be null")
+    private Integer maxTimePerFile;
+
+    @Schema(description = "Time in seconds after which scraper won't visit any new sites",
+            example = "1200")
+    @NotNull(message = "Max total time must not be null")
+    private Integer maxTotalTime;
 }

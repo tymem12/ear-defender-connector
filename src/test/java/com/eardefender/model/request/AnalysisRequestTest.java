@@ -28,7 +28,7 @@ public class AnalysisRequestTest {
         request = new AnalysisRequest();
 
         InputParams inputParams = new InputParams();
-        inputParams.setDepth(1);
+        inputParams.setMaxDepth(1);
         inputParams.setStartingPoint("startingPoint");
         inputParams.setModel("model");
         inputParams.setMaxFiles(100);
