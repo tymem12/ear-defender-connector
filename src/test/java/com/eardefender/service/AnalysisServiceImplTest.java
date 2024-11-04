@@ -16,6 +16,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +36,8 @@ class AnalysisServiceImplTest {
     private ScraperService scraperService;
     @Mock
     private UserService userService;
+    @Mock
+    private Logger logger;
 
     @InjectMocks
     private AnalysisServiceImpl analysisService;
