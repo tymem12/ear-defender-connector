@@ -71,7 +71,7 @@ class AnalysisServiceImplTest {
         Analysis capturedAnalysis = analysisCaptor.getValue();
 
         assertEquals(beginAnalysisRequest.getModel(), capturedAnalysis.getInputParams().getModel());
-        assertEquals(beginAnalysisRequest.getDepth(), capturedAnalysis.getInputParams().getDepth());
+        assertEquals(beginAnalysisRequest.getDepth(), capturedAnalysis.getInputParams().getMaxDepth());
         assertEquals(beginAnalysisRequest.getMaxFiles(), capturedAnalysis.getInputParams().getMaxFiles());
         assertEquals(beginAnalysisRequest.getStartingPoint(), capturedAnalysis.getInputParams().getStartingPoint());
 
