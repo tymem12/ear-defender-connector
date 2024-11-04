@@ -34,7 +34,7 @@ public class ScraperServiceImpl implements ScraperService {
         StartProcessingRequest startProcessingRequest = new StartProcessingRequest();
         startProcessingRequest.setModel(analysis.getInputParams().getModel());
         startProcessingRequest.setAnalysisId(scraperReportRequest.getAnalysisId());
-        startProcessingRequest.setNewFilePaths(new ArrayList<>(scraperReportRequest.getNewFilePaths()));
+        startProcessingRequest.setFilePaths(new ArrayList<>(scraperReportRequest.getNewFilePaths()));
 
         modelService.startProcessing(startProcessingRequest);
     }

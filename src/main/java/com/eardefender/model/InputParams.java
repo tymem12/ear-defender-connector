@@ -28,11 +28,11 @@ public class InputParams implements Cloneable {
 
     @Schema(description = "Time in seconds after which downloading singular file will be aborted",
             example = "300")
-    private String maxTimePerFile;
+    private Integer maxTimePerFile;
 
     @Schema(description = "Time in seconds after which scraper won't visit any new sites",
             example = "1200")
-    private String maxTotalTime;
+    private Integer maxTotalTime;
 
     @Override
     public InputParams clone() {

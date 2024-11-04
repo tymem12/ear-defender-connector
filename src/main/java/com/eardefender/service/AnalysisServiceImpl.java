@@ -49,7 +49,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         analysis.setStatus(STATUS_DOWNLOADING);
 
         InputParams inputParams = new InputParams();
-        inputParams.setDepth(request.getDepth());
+        inputParams.setMaxDepth(request.getDepth());
         inputParams.setModel(request.getModel());
         inputParams.setMaxFiles(request.getMaxFiles());
         inputParams.setStartingPoint(request.getStartingPoint());
