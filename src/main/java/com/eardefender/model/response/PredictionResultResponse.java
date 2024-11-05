@@ -2,13 +2,16 @@ package com.eardefender.model.response;
 
 import com.eardefender.model.SegmentPrediction;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
 @Schema(description = "Response model for prediction of a file")
+@Builder
 @Data
 public class PredictionResultResponse {
+
     @Schema(description = "The URL link associated with the prediction result",
             example = "https://example.com/prediction")
     private String link;

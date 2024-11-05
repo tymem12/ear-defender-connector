@@ -1,34 +1,36 @@
 package com.eardefender.mapper;
 
 import com.eardefender.model.Analysis;
+import com.eardefender.model.InputParams;
 import com.eardefender.model.PredictionResult;
 import com.eardefender.model.request.AnalysisRequest;
 import com.eardefender.model.response.AnalysisResponse;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 public class AnalysisMapper {
     private AnalysisMapper() {}
 
     public static AnalysisResponse toResponse(Analysis analysis) {
-        AnalysisResponse response = new AnalysisResponse();
+        InputParams inputParams = analysis.getInputParams() == null
+                ? null
+                : analysis.getInputParams().clone();
 
-        response.setId(analysis.getId());
-        response.setStatus(analysis.getStatus());
-        response.setTimestamp(analysis.getTimestamp());
-        response.setDuration(analysis.getDuration());
-        response.setFileCount(analysis.getFileCount());
+        List<PredictionResult> predictionResults = analysis.getPredictionResults() == null
+                ? null
+                : analysis.getPredictionResults().stream().map(PredictionResult::clone).toList();
 
-        if(analysis.getInputParams() != null) {
-            response.setInputParams(analysis.getInputParams().clone());
-        }
-
-        if (analysis.getPredictionResults() != null) {
-            response.setPredictionResults(analysis.getPredictionResults().stream().map(PredictionResult::clone).toList());
-        }
-
-        return response;
+        return AnalysisResponse.builder()
+                .id(analysis.getId())
+                .status(analysis.getStatus())
+                .timestamp(analysis.getTimestamp())
+                .duration(analysis.getDuration())
+                .fileCount(analysis.getFileCount())
+                .inputParams(inputParams)
+                .predictionResults(predictionResults)
+                .build();
     }
 
     public static Analysis updateFromRequest(Analysis analysis, AnalysisRequest analysisRequest) {

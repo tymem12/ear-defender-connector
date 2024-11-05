@@ -9,6 +9,7 @@ import java.util.List;
 @Schema(description = "Request Model for retrieving predictions")
 @Data
 public class GetPredictionsRequest {
+
     @NotEmpty(message = "Links must not be empty")
     private List<String> links;
 }

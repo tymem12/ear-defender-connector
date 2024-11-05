@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,13 +24,10 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping("/analyses")
+@RequiredArgsConstructor
 public class AnalysisController {
 
     private final AnalysisService analysisService;
-
-    public AnalysisController(AnalysisService analysisService) {
-        this.analysisService = analysisService;
-    }
 
     @Operation(summary = "Get an analysis by ID",
             description = "Returns the analysis details for the provided analysis ID.")

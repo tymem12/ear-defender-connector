@@ -7,20 +7,18 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Validated
-@RestController
 @RequestMapping("/scraper")
+@RestController
+@RequiredArgsConstructor
 public class ScraperController {
     private final ScraperService scraperService;
-
-    public ScraperController(ScraperService scraperService) {
-        this.scraperService = scraperService;
-    }
 
     @Operation(summary = "Report scraping results for further processing",
             description = "Report scraping results for further processing by Model API")

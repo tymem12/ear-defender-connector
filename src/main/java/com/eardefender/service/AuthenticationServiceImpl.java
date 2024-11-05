@@ -4,6 +4,7 @@ import com.eardefender.exception.UserAlreadyExistException;
 import com.eardefender.model.User;
 import com.eardefender.model.request.CredentialsRequest;
 import com.eardefender.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,22 +12,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
+
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
-
     private final AuthenticationManager authenticationManager;
-
-    public AuthenticationServiceImpl(
-            UserRepository userRepository,
-            AuthenticationManager authenticationManager,
-            PasswordEncoder passwordEncoder
-    ) {
-        this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Override
     public User signup(CredentialsRequest input) {

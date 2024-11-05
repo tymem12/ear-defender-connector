@@ -3,11 +3,13 @@ package com.eardefender.model.response;
 import com.eardefender.model.InputParams;
 import com.eardefender.model.PredictionResult;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
 @Schema(description = "Response model for an analysis")
+@Builder
 @Data
 public class AnalysisResponse {
 
