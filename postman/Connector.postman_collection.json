@@ -12,11 +12,28 @@
 				{
 					"name": "Begin Analysis",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZXpvNTA1IiwiaWF0IjoxNzMwNzUwMDE3LCJleHAiOjE3MzA4MzY0MTd9.Nr7X6w-taTZR6aVLjVKrxvqIQoD6Vpa2h2_Cx_vnZHE",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2NzIxODZhYzg4YWUyNjQ0YjY3ZGUzMDMiLCJleHAiOjE3MzAzMzk3NzYsImlhdCI6MTczMDI1MzM3Nn0.uXq2pyb5AJW7jDEjX13nDJ8R4y89o72X-RTcm3mz6lw",
+								"type": "text",
+								"disabled": true
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"startingPoint\": \"example-url\",\r\n    \"depth\": 3,\r\n    \"maxFiles\": 100,\r\n    \"model\": \"example-model1\"\r\n}",
+							"raw": "{\r\n  \"startingPoint\": \"https://example.com/prediction\",\r\n  \"depth\": 1,\r\n  \"maxFiles\": 1,\r\n  \"model\": \"example-model\",\r\n  \"maxPages\": 1,\r\n  \"maxTimePerFile\": 60,\r\n  \"maxTotalTime\": 60\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -39,6 +56,16 @@
 				{
 					"name": "Get all analyses",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZXpvNTA1IiwiaWF0IjoxNzMwNDkzNTE1LCJleHAiOjE3MzA1Nzk5MTV9.wo2LBfMA1iPWq9hUkf8pDrWF_0hNNbvqAIbF_KGEnVg",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -56,6 +83,16 @@
 				{
 					"name": "Get analysis by id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -74,6 +111,16 @@
 				{
 					"name": "Update analysis",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZXpvNTA1IiwiaWF0IjoxNzMwMzE3Nzk4LCJleHAiOjE3MzA0MDQxOTh9.nA4UL5GwqR1Pg6C1Ly0sVHDUztYc8KlyCdKmTpdSnl4",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -105,7 +152,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"status\": \"FINISHED\",\r\n  \"finishTimestamp\": \"2024-10-10T14:30:00Z\",\r\n  \"inputParams\": {\r\n    \"startingPoint\": \"https://example.com/prediction\",\r\n    \"depth\": 3,\r\n    \"maxFiles\": 100,\r\n    \"model\": \"example-model\"\r\n  },\r\n  \"predictionResults\": [\r\n    {\r\n      \"link\": \"https://example.com/prediction\",\r\n      \"timestamp\": \"2024-10-10T14:30:00Z\",\r\n      \"model\": \"example-model\",\r\n      \"modelPredictions\": [\r\n        {\r\n          \"segmentNumber\": 0,\r\n          \"label\": 1\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}",
+							"raw": "{\r\n  \"predictionResults\": [\r\n    {\r\n      \"link\": \"https://example.com/prediction2\",\r\n      \"timestamp\": \"2021-10-10T14:30:00Z\",\r\n      \"model\": \"example-model\",\r\n      \"modelPredictions\": [\r\n        {\r\n          \"segmentNumber\": 0,\r\n          \"label\": 1\r\n        },\r\n        {\r\n            \"segmentNumber\": 1,\r\n            \"label\": 0\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -113,13 +160,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{connector_address}}/analyses/{{id}}",
+							"raw": "{{connector_address}}/analyses/{{id}}/predictions",
 							"host": [
 								"{{connector_address}}"
 							],
 							"path": [
 								"analyses",
-								"{{id}}"
+								"{{id}}",
+								"predictions"
 							]
 						}
 					},
@@ -167,16 +215,30 @@
 				},
 				{
 					"name": "Get predictions with model and links",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"links\": [\r\n        \"https://example.com/prediction\",\r\n        \"https://example.com/prediction1\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{connector_address}}/predictions",
+							"raw": "{{connector_address}}/predictions/model/{{model}}",
 							"host": [
 								"{{connector_address}}"
 							],
 							"path": [
-								"predictions"
+								"predictions",
+								"model",
+								"{{model}}"
 							]
 						}
 					},
@@ -232,7 +294,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"dezo5051\",\r\n    \"password\": \"qwerty\",\r\n    \"fullname\": \"Dezo 505 fullname\"\r\n}",
+							"raw": "{\r\n    \"email\": \"dezo505\",\r\n    \"password\": \"qwerty\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -256,20 +318,13 @@
 					"name": "Login",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZXpvNTA1IiwiaWF0IjoxNzMwMzA4MTE1LCJleHAiOjE3MzAzOTQ1MTV9.pFS5PTzDNTZPLIGVQy5_8oEvujV-_prii5Zhuy8c_jo",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"dezo5051\",\r\n    \"password\": \"qwerty\"\r\n}",
+							"raw": "{\r\n    \"email\": \"dezo505\",\r\n    \"password\": \"qwerty\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -302,13 +357,20 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZXpvNTA1IiwiaWF0IjoxNzMwMzA4MTE1LCJleHAiOjE3MzAzOTQ1MTV9.pFS5PTzDNTZPLIGVQy5_8oEvujV-_prii5Zhuy8c_jo",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJUeW1lbSIsImlhdCI6MTczMDQ5MzM1NCwiZXhwIjoxNzMwNTc5NzU0fQ.3Cui5UqcWP_pdFFjRLblzzLRjSEKz-GYI7OUAxgIx8Y",
 									"type": "string"
 								}
 							]
 						},
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJUeW1lbSIsImlhdCI6MTczMDQ5MzM1NCwiZXhwIjoxNzMwNTc5NzU0fQ.3Cui5UqcWP_pdFFjRLblzzLRjSEKz-GYI7OUAxgIx8Y",
+								"type": "text",
+								"disabled": true
+							}
+						],
 						"url": {
 							"raw": "{{connector_address}}/users/me",
 							"host": [
@@ -317,6 +379,37 @@
 							"path": [
 								"users",
 								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "config",
+			"item": [
+				{
+					"name": "Scraper config",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Model config",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{connector_address}}/config/model",
+							"host": [
+								"{{connector_address}}"
+							],
+							"path": [
+								"config",
+								"model"
 							]
 						}
 					},
