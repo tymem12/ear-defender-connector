@@ -9,10 +9,16 @@ import com.eardefender.model.request.BeginAnalysisRequest;
 import java.util.List;
 
 public interface AnalysisService {
+
     void beginAnalysis(BeginAnalysisRequest request);
+
     Analysis getById(String id) throws AnalysisNotFoundException;
+
     List<Analysis> getAll();
+
     Analysis update(String id, AnalysisRequest analysisRequest) throws AnalysisNotFoundException;
+
     void deleteById(String id) throws AnalysisNotFoundException;
+
     Analysis addPredictionResults(String id, AddPredictionsRequest addPredictionsRequest) throws AnalysisNotFoundException;
 }

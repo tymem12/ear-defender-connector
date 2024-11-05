@@ -1,13 +1,19 @@
 package com.eardefender.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
 @Schema(description = "Model representing an analysis in the system")
+@Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "Analyses")
 public class Analysis {
 

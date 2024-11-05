@@ -8,6 +8,7 @@ import lombok.Data;
 @Schema(description = "Model representing the prediction for a specific file segment")
 @Data
 public class SegmentPrediction implements Cloneable {
+
     @Schema(description = "The segment number for which the prediction is made",
             example = "0")
     @NotNull(message = "Segment number must not be null")

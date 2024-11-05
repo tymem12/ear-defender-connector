@@ -13,6 +13,7 @@ import com.eardefender.model.request.BeginAnalysisRequest;
 import com.eardefender.model.request.BeginScrapingRequest;
 import com.eardefender.repository.AnalysisRepository;
 import com.eardefender.repository.PredictionResultRepository;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,9 @@ import java.util.List;
 import static com.eardefender.constants.EarDefenderConstants.STATUS_DOWNLOADING;
 
 @Service
+@RequiredArgsConstructor
 public class AnalysisServiceImpl implements AnalysisService {
+
     private final Logger logger;
 
     private final AnalysisRepository analysisRepository;
@@ -32,38 +35,25 @@ public class AnalysisServiceImpl implements AnalysisService {
     private final ScraperService scraperService;
     private final UserService userService;
 
-    public AnalysisServiceImpl(Logger logger, AnalysisRepository analysisRepository, PredictionResultRepository predictionResultRepository, ScraperService scraperService, UserService userService) {
-        this.logger = logger;
-        this.analysisRepository = analysisRepository;
-        this.predictionResultRepository = predictionResultRepository;
-        this.scraperService = scraperService;
-        this.userService = userService;
-    }
-
     @Override
     public void beginAnalysis(BeginAnalysisRequest request) {
-        Analysis analysis = new Analysis();
+        logger.info("Starting new analysis");
 
-        User owner = userService.getLoggedInUser();
-        analysis.setOwner(owner.getId());
+        InputParams inputParams = InputParams.builder()
+                .maxDepth(request.getDepth())
+                .model(request.getModel())
+                .maxFiles(request.getMaxFiles())
+                .startingPoint(request.getStartingPoint())
+                .maxPages(request.getMaxPages())
+                .maxTimePerFile(request.getMaxTimePerFile())
+                .maxTotalTime(request.getMaxTotalTime())
+                .build();
 
-        logger.info("Starting analysis for user: {}", owner.getEmail());
-
-        String timestamp = OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-        analysis.setTimestamp(timestamp);
-
-        analysis.setStatus(STATUS_DOWNLOADING);
-
-        InputParams inputParams = new InputParams();
-        inputParams.setMaxDepth(request.getDepth());
-        inputParams.setModel(request.getModel());
-        inputParams.setMaxFiles(request.getMaxFiles());
-        inputParams.setStartingPoint(request.getStartingPoint());
-
-        inputParams.setMaxPages(request.getMaxPages());
-        inputParams.setMaxTimePerFile(request.getMaxTimePerFile());
-        inputParams.setMaxTotalTime(request.getMaxTotalTime());
-
+        Analysis analysis = Analysis.builder()
+                .owner(userService.getLoggedInUser().getId())
+                .timestamp(OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                .status(STATUS_DOWNLOADING)
+                .inputParams(inputParams).build();
 
         analysis.setInputParams(inputParams);
 

@@ -12,6 +12,7 @@ import java.util.List;
 @Schema(description = "Request Model for creating prediction of a file")
 @Data
 public class PredictionResultRequest {
+
     @Schema(description = "The URL link associated with the prediction result",
             example = "https://example.com/prediction")
     @NotBlank(message = "Link must not be blank")

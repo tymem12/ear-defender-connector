@@ -5,34 +5,34 @@ import com.eardefender.model.SegmentPrediction;
 import com.eardefender.model.request.PredictionResultRequest;
 import com.eardefender.model.response.PredictionResultResponse;
 
+import java.util.List;
+
 public class PredictionResultMapper {
     private PredictionResultMapper() {}
 
     public static PredictionResult toModel(PredictionResultRequest request) {
-        PredictionResult result = new PredictionResult();
+        List<SegmentPrediction> segmentPredictions = request.getModelPredictions() == null
+                ? null
+                : request.getModelPredictions().stream().map(SegmentPrediction::clone).toList();
 
-        result.setModel(request.getModel());
-        result.setLink(request.getLink());
-        result.setTimestamp(request.getTimestamp());
-
-        if (request.getModelPredictions() != null) {
-            result.setModelPredictions(request.getModelPredictions().stream().map(SegmentPrediction::clone).toList());
-        }
-
-        return result;
+        return PredictionResult.builder()
+                .model(request.getModel())
+                .link(request.getLink())
+                .timestamp(request.getTimestamp())
+                .modelPredictions(segmentPredictions)
+                .build();
     }
 
     public static PredictionResultResponse toResponse(PredictionResult predictionResult) {
-        PredictionResultResponse response = new PredictionResultResponse();
+        List<SegmentPrediction> segmentPredictions = predictionResult.getModelPredictions() == null
+                ? null
+                : predictionResult.getModelPredictions().stream().map(SegmentPrediction::clone).toList();
 
-        response.setModel(predictionResult.getModel());
-        response.setLink(predictionResult.getLink());
-        response.setTimestamp(predictionResult.getTimestamp());
-
-        if (predictionResult.getModelPredictions() != null) {
-            response.setModelPredictions(predictionResult.getModelPredictions().stream().map(SegmentPrediction::clone).toList());
-        }
-
-        return response;
+        return PredictionResultResponse.builder()
+                .model(predictionResult.getModel())
+                .link(predictionResult.getLink())
+                .timestamp(predictionResult.getTimestamp())
+                .modelPredictions(segmentPredictions)
+                .build();
     }
 }

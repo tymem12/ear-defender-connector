@@ -4,13 +4,20 @@ import com.eardefender.validation.Timestamp;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Schema(description = "Model representing the result of a prediction of a file")
+@Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PredictionResult implements Cloneable {
+
     @Schema(description = "The URL link associated with the prediction result",
             example = "https://example.com/prediction")
     @NotBlank(message = "Link must not be blank")

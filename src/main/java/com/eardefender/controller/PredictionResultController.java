@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -17,15 +18,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Validated
-@RestController
 @RequestMapping("/predictions")
+@RestController
+@RequiredArgsConstructor
 public class PredictionResultController {
 
     private final PredictionResultService predictionResultService;
-
-    public PredictionResultController(PredictionResultService predictionResultService) {
-        this.predictionResultService = predictionResultService;
-    }
 
     @Operation(summary = "Get all prediction results",
             description = "Returns a list of all prediction results.")
