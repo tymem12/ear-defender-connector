@@ -1,6 +1,5 @@
 package com.eardefender.model;
 
-import com.eardefender.validation.Timestamp;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,8 +25,6 @@ public class PredictionResult implements Cloneable {
 
     @Schema(description = "Timestamp of the prediction result in ISO 8601 format (YYYY-MM-DDThh:mm:ssTZD)",
             example = "2024-10-10T14:30:00Z")
-    @NotBlank(message = "Timestamp must not be blank")
-    @Timestamp(message = "Timestamp must follow ISO 8601 (YYYY-MM-DDThh:mm:ssTZD) format")
     private String timestamp;
 
     @Schema(description = "The name of the model used for predictions",

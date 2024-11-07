@@ -111,6 +111,10 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         throwExceptionIfUserIsNotOwner(analysis);
 
+        addPredictionsRequest
+                .getPredictionResults()
+                .forEach(predictionResult -> predictionResult.setTimestamp(timestampService.getCurrentTimestampString()));
+
         List<PredictionResult> newList = new ArrayList<>(addPredictionsRequest.getPredictionResults());
 
         if (analysis.getPredictionResults() != null) {
