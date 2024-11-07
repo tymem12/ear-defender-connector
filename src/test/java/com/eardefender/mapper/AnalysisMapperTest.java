@@ -69,14 +69,12 @@ class AnalysisMapperTest {
         analysis.setPredictionResults(List.of(predictionResult));
 
         AnalysisRequest request = new AnalysisRequest();
-        request.setFinishTimestamp("2024-10-10T11:00:00+00:00");
-        request.setStatus("COMPLETED");
         request.setPredictionResults(List.of(predictionResult));
 
         Analysis updatedAnalysis = AnalysisMapper.updateFromRequest(analysis, request);
 
-        assertEquals("COMPLETED", updatedAnalysis.getStatus());
-        assertEquals(3600L, updatedAnalysis.getDuration());
+        assertEquals("IN_PROGRESS", updatedAnalysis.getStatus());
+        assertNull(updatedAnalysis.getDuration());
         assertEquals(1, updatedAnalysis.getFileCount());
         assertNotNull(updatedAnalysis.getPredictionResults());
         assertEquals(1, updatedAnalysis.getPredictionResults().size());
@@ -95,8 +93,6 @@ class AnalysisMapperTest {
         analysis.setFileCount(1);
 
         AnalysisRequest request = new AnalysisRequest();
-        request.setFinishTimestamp(null);
-        request.setStatus(null);
         request.setPredictionResults(null);
 
         Analysis updatedAnalysis = AnalysisMapper.updateFromRequest(analysis, request);

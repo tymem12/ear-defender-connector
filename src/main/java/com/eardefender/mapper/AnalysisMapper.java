@@ -34,23 +34,9 @@ public class AnalysisMapper {
     }
 
     public static Analysis updateFromRequest(Analysis analysis, AnalysisRequest analysisRequest) {
-        if(analysisRequest.getFinishTimestamp() != null) {
-            OffsetDateTime startTimestamp = OffsetDateTime.parse(analysis.getTimestamp());
-            OffsetDateTime finishTimestamp = OffsetDateTime.parse(analysisRequest.getFinishTimestamp());
-
-            Duration duration = Duration.between(startTimestamp, finishTimestamp);
-            long seconds = duration.getSeconds();
-
-            analysis.setDuration(seconds);
-        }
-
         if (analysisRequest.getPredictionResults() != null) {
             analysis.setPredictionResults(analysisRequest.getPredictionResults().stream().map(PredictionResult::clone).toList());
             analysis.setFileCount(analysisRequest.getPredictionResults().size());
-        }
-
-        if(analysisRequest.getStatus() != null) {
-            analysis.setStatus(analysisRequest.getStatus());
         }
 
         return analysis;

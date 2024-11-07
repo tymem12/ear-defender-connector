@@ -17,12 +17,12 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.eardefender.constants.EarDefenderConstants.STATUS_DOWNLOADING;
+import static com.eardefender.constants.EarDefenderConstants.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +33,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     private final AnalysisRepository analysisRepository;
     private final PredictionResultRepository predictionResultRepository;
     private final ScraperService scraperService;
+    private final TimestampService timestampService;
     private final UserService userService;
 
     @Override
@@ -51,8 +52,8 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         Analysis analysis = Analysis.builder()
                 .owner(userService.getLoggedInUser().getId())
-                .timestamp(OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                .status(STATUS_DOWNLOADING)
+                .timestamp(timestampService.getCurrentTimestampString())
+                .status(STATUS_INITIALIZING)
                 .inputParams(inputParams).build();
 
         analysis.setInputParams(inputParams);
@@ -121,6 +122,37 @@ public class AnalysisServiceImpl implements AnalysisService {
         analysisRepository.save(analysis);
 
         return analysis;
+    }
+
+    @Override
+    public Analysis updateStatus(String id, String status) throws AnalysisNotFoundException {
+        logger.info("Changing status of analysis {} to {}", id, status);
+
+        Analysis analysis = analysisRepository.findById(id).orElseThrow(() -> new AnalysisNotFoundException(id));
+
+        throwExceptionIfUserIsNotOwner(analysis);
+
+        analysis.setStatus(status);
+
+        return analysisRepository.save(analysis);
+    }
+
+    @Override
+    public Analysis finishAnalysis(String id, String finalStatus) throws AnalysisNotFoundException {
+        logger.info("Finishing analysis {} with {} final status", id, finalStatus);
+
+        Analysis analysis = analysisRepository.findById(id).orElseThrow(() -> new AnalysisNotFoundException(id));
+
+        throwExceptionIfUserIsNotOwner(analysis);
+
+        analysis.setStatus(finalStatus);
+
+        OffsetDateTime startTimestamp = timestampService.getTimestampFromString(analysis.getTimestamp());
+        OffsetDateTime finishTimestamp = timestampService.getCurrentTimestamp();
+        Duration duration = Duration.between(startTimestamp, finishTimestamp);
+        analysis.setDuration(duration.getSeconds());
+
+        return analysisRepository.save(analysis);
     }
 
     private void throwExceptionIfUserIsNotOwner(Analysis analysis) {

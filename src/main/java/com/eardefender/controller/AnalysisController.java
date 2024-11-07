@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.eardefender.constants.EarDefenderConstants.STATUS_FINISHED;
+
 @Validated
 @RestController
 @RequestMapping("/analyses")
@@ -103,6 +105,16 @@ public class AnalysisController {
     @PostMapping("/begin")
     public ResponseEntity<Void> begin(@RequestBody @Valid BeginAnalysisRequest beginAnalysisRequest) {
         analysisService.beginAnalysis(beginAnalysisRequest);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(summary = "Finish Analysis",
+            description = "Finishes Analysis.")
+    @ApiResponse(responseCode = "200", description = "Analysis finished successfully.")
+    @PostMapping("/{id}/finish")
+    public ResponseEntity<Void> finishAnalysis(@PathVariable String id) {
+        analysisService.finishAnalysis(id, STATUS_FINISHED);
+
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

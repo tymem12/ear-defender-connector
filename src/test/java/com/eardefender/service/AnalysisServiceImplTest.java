@@ -20,10 +20,11 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Time;
 import java.util.List;
 import java.util.Optional;
 
-import static com.eardefender.constants.EarDefenderConstants.STATUS_DOWNLOADING;
+import static com.eardefender.constants.EarDefenderConstants.STATUS_INITIALIZING;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -36,6 +37,8 @@ class AnalysisServiceImplTest {
     private ScraperService scraperService;
     @Mock
     private UserService userService;
+    @Mock
+    private TimestampService timestampService;
     @Mock
     private Logger logger;
 
@@ -65,6 +68,7 @@ class AnalysisServiceImplTest {
     void beginAnalysis_SavesAnalysisAndCallsModelService() {
         doNothing().when(scraperService).beginScraping(any());
         when(userService.getLoggedInUser()).thenReturn(user1);
+        when(timestampService.getCurrentTimestampString()).thenReturn("timestamp");
 
         analysisService.beginAnalysis(beginAnalysisRequest);
 
@@ -78,8 +82,8 @@ class AnalysisServiceImplTest {
         assertEquals(beginAnalysisRequest.getMaxFiles(), capturedAnalysis.getInputParams().getMaxFiles());
         assertEquals(beginAnalysisRequest.getStartingPoint(), capturedAnalysis.getInputParams().getStartingPoint());
 
-        assertEquals(STATUS_DOWNLOADING, capturedAnalysis.getStatus());
-        assertNotNull(capturedAnalysis.getTimestamp());
+        assertEquals(STATUS_INITIALIZING, capturedAnalysis.getStatus());
+        assertEquals("timestamp", capturedAnalysis.getTimestamp());
 
         assertEquals(user1.getId(), capturedAnalysis.getOwner());
 
@@ -157,7 +161,6 @@ class AnalysisServiceImplTest {
 
         Analysis result = analysisService.update(analysisModel.getId(), analysisRequest);
 
-        assertEquals(analysisRequest.getStatus(), result.getStatus());
         assertEquals(analysisRequest.getPredictionResults(), result.getPredictionResults());
         assertTrue(result.getDuration() > 0);
         assertEquals(analysisRequest.getPredictionResults().size(), result.getFileCount());
