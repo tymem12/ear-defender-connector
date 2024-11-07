@@ -117,4 +117,14 @@ public class AnalysisController {
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @Operation(summary = "Abort Analysis",
+            description = "Aborts Analysis.")
+    @ApiResponse(responseCode = "200", description = "Analysis aborted successfully.")
+    @PostMapping("/{id}/abort")
+    public ResponseEntity<Void> abortAnalysis(@PathVariable String id) {
+        analysisService.finishAnalysis(id, STATUS_FINISHED);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }
