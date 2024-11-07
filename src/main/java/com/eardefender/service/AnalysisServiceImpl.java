@@ -111,9 +111,11 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         throwExceptionIfUserIsNotOwner(analysis);
 
-        List<PredictionResult> newList = new ArrayList<>();
-        newList.addAll(analysis.getPredictionResults());
-        newList.addAll(addPredictionsRequest.getPredictionResults());
+        List<PredictionResult> newList = new ArrayList<>(addPredictionsRequest.getPredictionResults());
+
+        if (analysis.getPredictionResults() != null) {
+            newList.addAll(analysis.getPredictionResults());
+        }
 
         analysis.setPredictionResults(newList);
 

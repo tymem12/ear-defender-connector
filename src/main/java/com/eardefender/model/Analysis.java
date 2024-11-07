@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Schema(description = "Model representing an analysis in the system")
@@ -42,7 +44,7 @@ public class Analysis {
     private Integer fileCount;
 
     @Schema(description = "List of prediction results generated during the analysis")
-    private List<PredictionResult> predictionResults;
+    private List<PredictionResult> predictionResults = new ArrayList<>();
 
     @Schema(description = "Id of the analysis owner",
             example = "672289c68139b90ca9d750c3")
