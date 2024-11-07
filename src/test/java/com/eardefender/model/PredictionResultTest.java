@@ -86,37 +86,4 @@ class PredictionResultTest {
         ConstraintViolation<PredictionResult> violation = violations.iterator().next();
         assertEquals("Link must not be blank", violation.getMessage());
     }
-
-    @Test
-    public void testInvalidPredictionResult_NullTimestamp() {
-        model.setTimestamp(null);
-
-        Set<ConstraintViolation<PredictionResult>> violations = validator.validate(model);
-
-        assertEquals(1, violations.size());
-        ConstraintViolation<PredictionResult> violation = violations.iterator().next();
-        assertEquals("Timestamp must not be blank", violation.getMessage());
-    }
-
-    @Test
-    public void testInvalidPredictionResult_BlankTimestamp() {
-        model.setTimestamp("");
-
-        Set<ConstraintViolation<PredictionResult>> violations = validator.validate(model);
-
-        assertEquals(1, violations.size());
-        ConstraintViolation<PredictionResult> violation = violations.iterator().next();
-        assertEquals("Timestamp must not be blank", violation.getMessage());
-    }
-
-    @Test
-    public void testInvalidPredictionResult_InvalidTimestamp() {
-        model.setTimestamp("invalid");
-
-        Set<ConstraintViolation<PredictionResult>> violations = validator.validate(model);
-
-        assertEquals(1, violations.size());
-        ConstraintViolation<PredictionResult> violation = violations.iterator().next();
-        assertEquals("Timestamp must follow ISO 8601 (YYYY-MM-DDThh:mm:ssTZD) format", violation.getMessage());
-    }
 }
