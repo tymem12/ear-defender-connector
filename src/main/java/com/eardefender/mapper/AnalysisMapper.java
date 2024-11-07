@@ -6,8 +6,6 @@ import com.eardefender.model.PredictionResult;
 import com.eardefender.model.request.AnalysisRequest;
 import com.eardefender.model.response.AnalysisResponse;
 
-import java.time.Duration;
-import java.time.OffsetDateTime;
 import java.util.List;
 
 public class AnalysisMapper {
