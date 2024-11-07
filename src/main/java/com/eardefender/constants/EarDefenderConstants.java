@@ -7,4 +7,6 @@ public class EarDefenderConstants {
     public static final String STATUS_FINISHED = "FINISHED";
 
     public static final String BEGIN_SCRAPING_PATH = "/scraping/start";
+
+    public static final String RUN_MODEL_PATH = "/model/run";
 }
