@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AnalysisRequestTest {
@@ -33,8 +32,6 @@ public class AnalysisRequestTest {
         inputParams.setModel("model");
         inputParams.setMaxFiles(100);
 
-        request.setStatus("PROCESSING");
-        request.setFinishTimestamp("2005-07-16T19:20:40+01:00");
         request.setPredictionResults(List.of());
     }
 
@@ -43,27 +40,5 @@ public class AnalysisRequestTest {
         Set<ConstraintViolation<AnalysisRequest>> violations = validator.validate(request);
 
         assertTrue(violations.isEmpty(), "No validation errors expected for valid request");
-    }
-
-    @Test
-    public void testInvalidAnalysisRequest_InvalidStatus() {
-        request.setStatus("INVALID");
-
-        Set<ConstraintViolation<AnalysisRequest>> violations = validator.validate(request);
-
-        assertEquals(1, violations.size());
-        ConstraintViolation<AnalysisRequest> violation = violations.iterator().next();
-        assertEquals("Status must be one of the following: DOWNLOADING, PROCESSING, FINISHED", violation.getMessage());
-    }
-
-    @Test
-    public void testInvalidAnalysisRequest_InvalidTimestamp() {
-        request.setFinishTimestamp("Invalid");
-
-        Set<ConstraintViolation<AnalysisRequest>> violations = validator.validate(request);
-
-        assertEquals(1, violations.size());
-        ConstraintViolation<AnalysisRequest> violation = violations.iterator().next();
-        assertEquals("Timestamp must follow ISO 8601 (YYYY-MM-DDThh:mm:ssTZD) format", violation.getMessage());
     }
 }

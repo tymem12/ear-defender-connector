@@ -6,8 +6,6 @@ import com.eardefender.model.PredictionResult;
 import com.eardefender.model.request.AnalysisRequest;
 import com.eardefender.model.response.AnalysisResponse;
 
-import java.time.Duration;
-import java.time.OffsetDateTime;
 import java.util.List;
 
 public class AnalysisMapper {
@@ -34,23 +32,9 @@ public class AnalysisMapper {
     }
 
     public static Analysis updateFromRequest(Analysis analysis, AnalysisRequest analysisRequest) {
-        if(analysisRequest.getFinishTimestamp() != null) {
-            OffsetDateTime startTimestamp = OffsetDateTime.parse(analysis.getTimestamp());
-            OffsetDateTime finishTimestamp = OffsetDateTime.parse(analysisRequest.getFinishTimestamp());
-
-            Duration duration = Duration.between(startTimestamp, finishTimestamp);
-            long seconds = duration.getSeconds();
-
-            analysis.setDuration(seconds);
-        }
-
         if (analysisRequest.getPredictionResults() != null) {
             analysis.setPredictionResults(analysisRequest.getPredictionResults().stream().map(PredictionResult::clone).toList());
             analysis.setFileCount(analysisRequest.getPredictionResults().size());
-        }
-
-        if(analysisRequest.getStatus() != null) {
-            analysis.setStatus(analysisRequest.getStatus());
         }
 
         return analysis;
