@@ -21,4 +21,8 @@ public interface AnalysisService {
     void deleteById(String id) throws AnalysisNotFoundException;
 
     Analysis addPredictionResults(String id, AddPredictionsRequest addPredictionsRequest) throws AnalysisNotFoundException;
+
+    Analysis updateStatus(String id, String status) throws AnalysisNotFoundException;
+
+    Analysis finishAnalysis(String id, String finalStatus) throws AnalysisNotFoundException;
 }
