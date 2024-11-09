@@ -62,14 +62,14 @@ class ScraperServiceImplTest {
     private void setUpAnalysisModel() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        InputStream jsonInputStream = getClass().getResourceAsStream("/analysis.json");
+        InputStream jsonInputStream = getClass().getResourceAsStream("/jsons/analysis.json");
         analysis = objectMapper.readValue(jsonInputStream, Analysis.class);
     }
 
     private void setUpScraperReportRequest() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        InputStream jsonInputStream = getClass().getResourceAsStream("/scraper_report_request.json");
+        InputStream jsonInputStream = getClass().getResourceAsStream("/jsons/scraper_report_request.json");
         scraperReportRequest = objectMapper.readValue(jsonInputStream, ScraperReportRequest.class);
     }
 }

@@ -84,14 +84,14 @@ class PredictionResultServiceImplTest {
     private void setupPredictionResultRequest() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        InputStream jsonInputStream = getClass().getResourceAsStream("/prediction_result_request.json");
+        InputStream jsonInputStream = getClass().getResourceAsStream("/jsons/prediction_result_request.json");
         predictionResultRequest = objectMapper.readValue(jsonInputStream, PredictionResultRequest.class);
     }
 
     private void setupPredictionResult() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        InputStream jsonInputStream = getClass().getResourceAsStream("/prediction_result.json");
+        InputStream jsonInputStream = getClass().getResourceAsStream("/jsons/prediction_result.json");
         predictionResult = objectMapper.readValue(jsonInputStream, PredictionResult.class);
     }
 }

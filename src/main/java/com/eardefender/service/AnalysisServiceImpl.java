@@ -140,7 +140,9 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         analysis.setStatus(status);
 
-        return analysisRepository.save(analysis);
+        analysisRepository.save(analysis);
+
+        return analysis;
     }
 
     @Override
@@ -158,7 +160,9 @@ public class AnalysisServiceImpl implements AnalysisService {
         Duration duration = Duration.between(startTimestamp, finishTimestamp);
         analysis.setDuration(duration.getSeconds());
 
-        return analysisRepository.save(analysis);
+        analysisRepository.save(analysis);
+
+        return analysis;
     }
 
     private void throwExceptionIfUserIsNotOwner(Analysis analysis) {
