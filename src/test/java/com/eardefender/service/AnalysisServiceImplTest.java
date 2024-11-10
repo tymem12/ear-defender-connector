@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -212,31 +213,86 @@ class AnalysisServiceImplTest {
         assertThrows(UserNotOwnerException.class, () -> analysisService.addPredictionResults(analysisModel.getId(), addPredictionsRequest));
     }
 
+    @Test
+    void updateStatus_AnalysisInRepository_StatusIsUpdated() {
+        when(userService.getLoggedInUser()).thenReturn(user1);
+        when(analysisRepository.findById(anyString())).thenReturn(Optional.of(analysisModel));
+
+        Analysis result = analysisService.updateStatus(analysisModel.getId(), "new");
+
+        assertEquals(result.getStatus(), "new");
+    }
+
+    @Test
+    void updateStatus_AnalysisNotInRepository_ThrowsException() {
+        when(analysisRepository.findById(anyString())).thenReturn(Optional.empty());
+
+        assertThrows(AnalysisNotFoundException.class, () -> analysisService.updateStatus(analysisModel.getId(), "new"));
+    }
+
+    @Test
+    void updateStatus_AnalysisNotInRepositoryUserNotOwner_ThrowsException() {
+        when(userService.getLoggedInUser()).thenReturn(user2);
+        when(analysisRepository.findById(anyString())).thenReturn(Optional.of(analysisModel));
+
+        assertThrows(UserNotOwnerException.class, () -> analysisService.updateStatus(analysisModel.getId(), "new"));
+    }
+
+    @Test
+    void finishAnalysis_AnalysisInRepository_AnalysisIsFinished() {
+        when(analysisRepository.findById(anyString())).thenReturn(Optional.of(analysisModel));
+        when(timestampService.getCurrentTimestamp())
+                .thenReturn(OffsetDateTime.parse("1997-07-16T19:21:30+01:00"));
+        when(timestampService.getTimestampFromString(any()))
+                .thenReturn(OffsetDateTime.parse("1997-07-16T19:20:30+01:00"));
+        when(userService.getLoggedInUser()).thenReturn(user1);
+
+        Analysis result = analysisService.finishAnalysis(analysisModel.getId(), "finish");
+
+        assertEquals(result.getStatus(), "finish");
+        assertEquals(result.getDuration(), 60);
+    }
+
+    @Test
+    void finishAnalysis_AnalysisNotInRepository_ThrowsException() {
+        when(analysisRepository.findById(anyString())).thenReturn(Optional.empty());
+
+        assertThrows(AnalysisNotFoundException.class, () -> analysisService.finishAnalysis(analysisModel.getId(), "finish"));
+    }
+
+    @Test
+    void finishAnalysis_AnalysisInRepositoryUserNotOwner_AnalysisIsFinished() {
+        when(analysisRepository.findById(anyString())).thenReturn(Optional.of(analysisModel));
+        when(userService.getLoggedInUser()).thenReturn(user2);
+
+        assertThrows(UserNotOwnerException.class, () -> analysisService.finishAnalysis(analysisModel.getId(), "finish"));
+    }
+
     private void setUpModel() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        InputStream jsonInputStream = getClass().getResourceAsStream("/analysis.json");
+        InputStream jsonInputStream = getClass().getResourceAsStream("/jsons/analysis.json");
         analysisModel = objectMapper.readValue(jsonInputStream, Analysis.class);
     }
 
     private void setUpBeginAnalysisRequest() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        InputStream jsonInputStream = getClass().getResourceAsStream("/begin_analysis_request.json");
+        InputStream jsonInputStream = getClass().getResourceAsStream("/jsons/begin_analysis_request.json");
         beginAnalysisRequest = objectMapper.readValue(jsonInputStream, BeginAnalysisRequest.class);
     }
 
     private void setUpAnalysisRequest() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        InputStream jsonInputStream = getClass().getResourceAsStream("/analysis_request.json");
+        InputStream jsonInputStream = getClass().getResourceAsStream("/jsons/analysis_request.json");
         analysisRequest = objectMapper.readValue(jsonInputStream, AnalysisRequest.class);
     }
 
     private void setUpAddPredictionsRequest() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        InputStream jsonInputStream = getClass().getResourceAsStream("/add_predictions_request.json");
+        InputStream jsonInputStream = getClass().getResourceAsStream("/jsons/add_predictions_request.json");
         addPredictionsRequest = objectMapper.readValue(jsonInputStream, AddPredictionsRequest.class);
     }
 
