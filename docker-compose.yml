@@ -5,8 +5,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        JAR_FILE: target/ear-defender-connector-app.jar
     image: ear-defender-connector-app:latest
     container_name: connector-app
     restart: always
