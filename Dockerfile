@@ -2,6 +2,7 @@ FROM maven:3.8.3-openjdk-17 AS builder
 
 WORKDIR /app
 
+COPY lombok.config .
 COPY pom.xml .
 COPY src ./src
 
