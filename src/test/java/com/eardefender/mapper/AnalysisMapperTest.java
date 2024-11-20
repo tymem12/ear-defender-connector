@@ -22,6 +22,7 @@ class AnalysisMapperTest {
         analysis.setTimestamp("2024-10-10T10:00:00+00:00");
         analysis.setDuration(3600L);
         analysis.setFileCount(5);
+        analysis.setDeepfakeFileCount(1);
         analysis.setInputParams(new InputParams());
         PredictionResult predictionResult = new PredictionResult();
         analysis.setPredictionResults(List.of(predictionResult));
@@ -33,6 +34,7 @@ class AnalysisMapperTest {
         assertEquals("2024-10-10T10:00:00+00:00", response.getTimestamp());
         assertEquals(3600L, response.getDuration());
         assertEquals(5, response.getFileCount());
+        analysis.setDeepfakeFileCount(1);
         assertNotNull(response.getInputParams());
         assertNotNull(response.getPredictionResults());
         assertEquals(1, response.getPredictionResults().size());
@@ -47,6 +49,7 @@ class AnalysisMapperTest {
         analysis.setTimestamp("2024-10-10T10:00:00+00:00");
         analysis.setDuration(3600L);
         analysis.setFileCount(3);
+        analysis.setDeepfakeFileCount(2);
         analysis.setInputParams(null);
         analysis.setPredictionResults(null);
 
@@ -57,6 +60,7 @@ class AnalysisMapperTest {
         assertEquals("2024-10-10T10:00:00+00:00", response.getTimestamp());
         assertEquals(3600L, response.getDuration());
         assertEquals(3, response.getFileCount());
+        assertEquals(2, response.getDeepfakeFileCount());
         assertNull(response.getInputParams());
         assertNull(response.getPredictionResults());
     }
@@ -112,6 +116,7 @@ class AnalysisMapperTest {
         analysis.setDuration(3600L);
         analysis.setFileCount(5);
         analysis.setInputParams(new InputParams());
+        analysis.setDeepfakeFileCount(3);
         PredictionResult predictionResult = new PredictionResult();
         analysis.setPredictionResults(List.of(predictionResult));
 
@@ -121,6 +126,7 @@ class AnalysisMapperTest {
         assertEquals("COMPLETED", response.getStatus());
         assertEquals("2024-10-10T10:00:00+00:00", response.getTimestamp());
         assertEquals(3600L, response.getDuration());
+        assertEquals(3, response.getDeepfakeFileCount());
         assertEquals(5, response.getFileCount());
         assertNotNull(response.getInputParams());
     }

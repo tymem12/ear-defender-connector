@@ -17,16 +17,13 @@ public class AnalysisMapper {
                 ? null
                 : analysis.getInputParams().clone();
 
-        List<PredictionResult> predictionResults = analysis.getPredictionResults() == null
-                ? null
-                : analysis.getPredictionResults().stream().map(PredictionResult::clone).toList();
-
         return AnalysisResponse.builder()
                 .id(analysis.getId())
                 .status(analysis.getStatus())
                 .timestamp(analysis.getTimestamp())
                 .duration(analysis.getDuration())
                 .fileCount(analysis.getFileCount())
+                .deepfakeFileCount(analysis.getDeepfakeFileCount())
                 .inputParams(inputParams)
                 .build();
     }
@@ -46,6 +43,7 @@ public class AnalysisMapper {
                 .timestamp(analysis.getTimestamp())
                 .duration(analysis.getDuration())
                 .fileCount(analysis.getFileCount())
+                .deepfakeFileCount(analysis.getDeepfakeFileCount())
                 .inputParams(inputParams)
                 .predictionResults(predictionResults)
                 .build();

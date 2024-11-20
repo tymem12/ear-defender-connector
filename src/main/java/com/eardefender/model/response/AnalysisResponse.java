@@ -32,4 +32,8 @@ public class AnalysisResponse {
     @Schema(description = "Number of files processed during the analysis",
             example = "10")
     private Integer fileCount;
+
+    @Schema(description = "Number of deepfake files detected during the analysis",
+            example = "6")
+    private Integer deepfakeFileCount;
 }
