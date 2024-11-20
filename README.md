@@ -17,7 +17,6 @@ If run with docker-compose then: http://localhost:9090/swagger-ui/index.html
 - Run `docker-compose up` command to launch containers
 
 ### Alternative
-- Run `mvn clean package`
 - Run `docker-compose up --build`
 
 ### Docker commands
