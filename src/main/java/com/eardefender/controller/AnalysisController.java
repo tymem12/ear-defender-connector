@@ -40,7 +40,7 @@ public class AnalysisController {
     @GetMapping("/{id}")
     public ResponseEntity<AnalysisResponse> getById(@Parameter(description = "ID of the analysis to be retrieved", required = true) @PathVariable String id) {
         Analysis analysis = analysisService.getById(id);
-        AnalysisResponse analysisResponse = AnalysisMapper.toResponse(analysis);
+        AnalysisResponse analysisResponse = AnalysisMapper.toDetailedResponse(analysis);
         return ResponseEntity.status(HttpStatus.OK).body(analysisResponse);
     }
 
@@ -52,7 +52,7 @@ public class AnalysisController {
         List<Analysis> analysisList = analysisService.getAll();
         List<AnalysisResponse> analysisResponseList = analysisList
                 .stream()
-                .map(AnalysisMapper::toResponse)
+                .map(AnalysisMapper::toBaseResponse)
                 .toList();
         return ResponseEntity.status(HttpStatus.OK).body(analysisResponseList);
     }
@@ -69,7 +69,7 @@ public class AnalysisController {
             @Parameter(description = "ID of the analysis to be updated", required = true) @PathVariable String id,
             @RequestBody @Valid AnalysisRequest analysisRequest) {
         Analysis result = analysisService.update(id, analysisRequest);
-        return ResponseEntity.status(HttpStatus.OK).body(AnalysisMapper.toResponse(result));
+        return ResponseEntity.status(HttpStatus.OK).body(AnalysisMapper.toDetailedResponse(result));
     }
 
     @Operation(summary = "Delete analysis by ID",
