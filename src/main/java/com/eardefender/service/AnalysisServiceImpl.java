@@ -160,9 +160,15 @@ public class AnalysisServiceImpl implements AnalysisService {
         Duration duration = Duration.between(startTimestamp, finishTimestamp);
         analysis.setDuration(duration.getSeconds());
 
+        analysis.setDeepfakeFileCount(getDeepfakeFileCount(analysis));
+
         analysisRepository.save(analysis);
 
         return analysis;
+    }
+
+    private int getDeepfakeFileCount(Analysis analysis) {
+        return (int) analysis.getPredictionResults().stream().filter(p -> p.getLabel().equals(LABEL_POSITIVE)).count();
     }
 
     private void throwExceptionIfUserIsNotOwner(Analysis analysis) {

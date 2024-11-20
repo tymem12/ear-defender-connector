@@ -1,15 +1,12 @@
 package com.eardefender.model.response;
 
 import com.eardefender.model.InputParams;
-import com.eardefender.model.PredictionResult;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
-import java.util.List;
-
-@Schema(description = "Response model for an analysis")
-@Builder
+@Schema(description = "Base response model for an analysis")
+@SuperBuilder
 @Data
 public class AnalysisResponse {
 
@@ -36,6 +33,7 @@ public class AnalysisResponse {
             example = "10")
     private Integer fileCount;
 
-    @Schema(description = "List of prediction results generated during the analysis")
-    private List<PredictionResult> predictionResults;
+    @Schema(description = "Number of deepfake files detected during the analysis",
+            example = "6")
+    private Integer deepfakeFileCount;
 }

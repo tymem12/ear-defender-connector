@@ -43,6 +43,10 @@ public class Analysis {
             example = "10")
     private Integer fileCount;
 
+    @Schema(description = "Number of deepfake files detected during the analysis",
+            example = "6")
+    private Integer deepfakeFileCount;
+
     @Schema(description = "List of prediction results generated during the analysis")
     private List<PredictionResult> predictionResults = new ArrayList<>();
 
