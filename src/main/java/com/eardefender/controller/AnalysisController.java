@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.eardefender.constants.EarDefenderConstants.STATUS_ABORTED;
 import static com.eardefender.constants.EarDefenderConstants.STATUS_FINISHED;
 
 @Validated
@@ -123,7 +124,7 @@ public class AnalysisController {
     @ApiResponse(responseCode = "200", description = "Analysis aborted successfully.")
     @PostMapping("/{id}/abort")
     public ResponseEntity<Void> abortAnalysis(@PathVariable String id) {
-        analysisService.finishAnalysis(id, STATUS_FINISHED);
+        analysisService.finishAnalysis(id, STATUS_ABORTED);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
