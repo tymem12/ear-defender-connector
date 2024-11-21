@@ -168,7 +168,9 @@ public class AnalysisServiceImpl implements AnalysisService {
     }
 
     private int getDeepfakeFileCount(Analysis analysis) {
-        return (int) analysis.getPredictionResults().stream().filter(p -> p.getLabel().equals(LABEL_POSITIVE)).count();
+        return analysis.getPredictionResults() != null
+                ? (int) analysis.getPredictionResults().stream().filter(p -> p.getLabel().equals(LABEL_POSITIVE)).count()
+                : 0;
     }
 
     private void throwExceptionIfUserIsNotOwner(Analysis analysis) {
