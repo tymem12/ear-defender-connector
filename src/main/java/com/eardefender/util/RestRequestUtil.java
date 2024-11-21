@@ -36,9 +36,9 @@ public class RestRequestUtil {
         );
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            logger.info("Request to sent successfully to {}", url);
+            logger.info("Request to sent successfully to {}, request body: {}", url, body.toString());
         } else {
-            logger.error("Failed to sent request to {}. Response status: {}", url, response.getStatusCode());
+            logger.error("Failed to sent request to {}. Response status: {}, Request body: {}", url, response.getStatusCode(), body.toString());
         }
 
         return response;
