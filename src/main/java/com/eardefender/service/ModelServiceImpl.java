@@ -1,7 +1,7 @@
 package com.eardefender.service;
 
 import com.eardefender.exception.RestRequestException;
-import com.eardefender.model.request.StartProcessingRequest;
+import com.eardefender.model.request.BeginProcessingRequest;
 import com.eardefender.util.RestRequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public void startProcessing(StartProcessingRequest startProcessingRequest) {
+    public void startProcessing(BeginProcessingRequest startProcessingRequest) {
         logger.info("Starting processing for analysis ID: {}", startProcessingRequest.getAnalysisId());
 
         RestRequestUtil.sendPostRequestWithAuth(

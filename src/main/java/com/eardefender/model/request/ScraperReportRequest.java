@@ -1,5 +1,6 @@
 package com.eardefender.model.request;
 
+import com.eardefender.model.File;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -13,6 +14,6 @@ public class ScraperReportRequest {
             example = "95a7ddce-4077-49f8-92a3-440842e04afe")
     private String analysisId;
 
-    @Schema(description = "List paths to newly downloaded files", example = "[\"file1.mp3\", \"file2.mp3\", \"file3.mp3\"]")
-    private List<String> newFilePaths;
+    @Schema(description = "List of newly downloaded files")
+    private List<File> files;
 }

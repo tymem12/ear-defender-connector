@@ -5,7 +5,7 @@ import com.eardefender.exception.RestRequestException;
 import com.eardefender.model.Analysis;
 import com.eardefender.model.request.BeginScrapingRequest;
 import com.eardefender.model.request.ScraperReportRequest;
-import com.eardefender.model.request.StartProcessingRequest;
+import com.eardefender.model.request.BeginProcessingRequest;
 import com.eardefender.repository.AnalysisRepository;
 import com.eardefender.util.RestRequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.ArrayList;
 
 import static com.eardefender.constants.EarDefenderConstants.*;
 
@@ -72,10 +70,11 @@ public class ScraperServiceImpl implements ScraperService {
                 .findById(scraperReportRequest.getAnalysisId())
                 .orElseThrow(() -> new AnalysisNotFoundException(scraperReportRequest.getAnalysisId()));
 
-        StartProcessingRequest startProcessingRequest = new StartProcessingRequest();
+        BeginProcessingRequest startProcessingRequest = new BeginProcessingRequest();
         startProcessingRequest.setModel(analysis.getInputParams().getModel());
         startProcessingRequest.setAnalysisId(scraperReportRequest.getAnalysisId());
-        startProcessingRequest.setFilePaths(new ArrayList<>(scraperReportRequest.getNewFilePaths()));
+
+        startProcessingRequest.setFiles(scraperReportRequest.getFiles());
 
         modelService.startProcessing(startProcessingRequest);
     }
