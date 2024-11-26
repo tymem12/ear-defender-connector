@@ -30,6 +30,7 @@ class PredictionResultTest {
         model.setModel("example-model");
         model.setScore(0.45f);
         model.setLabel(1);
+        model.setFilePath("file1.mp3");
 
         SegmentPrediction segmentPrediction = new SegmentPrediction();
         segmentPrediction.setLabel(1);

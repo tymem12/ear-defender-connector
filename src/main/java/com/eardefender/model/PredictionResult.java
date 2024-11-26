@@ -24,6 +24,11 @@ public class PredictionResult implements Cloneable {
     @NotBlank(message = "Link must not be blank")
     private String link;
 
+    @Schema(description = "The file path associated with the prediction result",
+            example = "file1.mp3")
+    @NotBlank(message = "File name must not be blank")
+    private String filePath;
+
     @Schema(description = "Timestamp of the prediction result in ISO 8601 format (YYYY-MM-DDThh:mm:ssTZD)",
             example = "2024-10-10T14:30:00Z")
     private String timestamp;

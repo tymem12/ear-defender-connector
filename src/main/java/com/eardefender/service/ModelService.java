@@ -1,8 +1,8 @@
 package com.eardefender.service;
 
-import com.eardefender.model.request.StartProcessingRequest;
+import com.eardefender.model.request.BeginProcessingRequest;
 
 public interface ModelService {
 
-    void startProcessing(StartProcessingRequest request);
+    void startProcessing(BeginProcessingRequest request);
 }
