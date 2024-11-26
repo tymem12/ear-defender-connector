@@ -2,6 +2,8 @@ package com.eardefender.model.request;
 
 import com.eardefender.model.File;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 import java.util.List;
@@ -12,8 +14,10 @@ public class ScraperReportRequest {
 
     @Schema(description = "Unique identifier for the analysis",
             example = "95a7ddce-4077-49f8-92a3-440842e04afe")
+    @NotBlank(message = "Analysis id must not be blank")
     private String analysisId;
 
     @Schema(description = "List of newly downloaded files")
+    @NotEmpty(message = "File list must not be empty")
     private List<File> files;
 }
