@@ -1,6 +1,6 @@
 package com.eardefender.model.request;
 
-import com.eardefender.model.InputParams;
+import com.eardefender.model.PredictionResult;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -26,13 +26,7 @@ public class AnalysisRequestTest {
 
         request = new AnalysisRequest();
 
-        InputParams inputParams = new InputParams();
-        inputParams.setMaxDepth(1);
-        inputParams.setStartingPoint("startingPoint");
-        inputParams.setModel("model");
-        inputParams.setMaxFiles(100);
-
-        request.setPredictionResults(List.of());
+        request.setPredictionResults(List.of(new PredictionResult()));
     }
 
     @Test
