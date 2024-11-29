@@ -76,6 +76,10 @@ public class ScraperServiceImpl implements ScraperService {
 
         startProcessingRequest.setFiles(scraperReportRequest.getFiles());
 
-        modelService.startProcessing(startProcessingRequest);
+        if (scraperReportRequest.getFiles() == null || scraperReportRequest.getFiles().isEmpty()) {
+            analysisService.finishAnalysis(analysis.getId(), STATUS_FINISHED);
+        } else {
+            modelService.startProcessing(startProcessingRequest);
+        }
     }
 }
