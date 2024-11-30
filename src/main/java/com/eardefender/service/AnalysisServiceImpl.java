@@ -16,6 +16,7 @@ import com.eardefender.repository.PredictionResultRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -105,29 +106,43 @@ public class AnalysisServiceImpl implements AnalysisService {
          analysisRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
     public Analysis addPredictionResults(String id, AddPredictionsRequest addPredictionsRequest) throws AnalysisNotFoundException {
+        logger.info("Adding {} predictions to analysis {}", addPredictionsRequest.getPredictionResults().size(), id);
+
         Analysis analysis = analysisRepository.findById(id).orElseThrow(() -> new AnalysisNotFoundException(id));
 
         throwExceptionIfUserIsNotOwner(analysis);
 
-        addPredictionsRequest
-                .getPredictionResults()
-                .forEach(predictionResult -> predictionResult.setTimestamp(timestampService.getCurrentTimestampString()));
+        saveNewPredictions(addPredictionsRequest.getPredictionResults());
 
-        List<PredictionResult> newList = new ArrayList<>(addPredictionsRequest.getPredictionResults());
+        List<PredictionResult> updatedPredictionList = new ArrayList<>(addPredictionsRequest.getPredictionResults());
 
         if (analysis.getPredictionResults() != null) {
-            newList.addAll(analysis.getPredictionResults());
+            updatedPredictionList.addAll(analysis.getPredictionResults());
         }
 
-        analysis.setPredictionResults(newList);
+        analysis.setPredictionResults(updatedPredictionList);
 
-        predictionResultRepository.saveAll(newList);
+        logger.info("Saving analysis with {} predictions to analysis repository", analysis.getPredictionResults().size());
 
         analysisRepository.save(analysis);
 
         return analysis;
+    }
+
+    private void saveNewPredictions(List<PredictionResult> predictionResults) {
+        List<PredictionResult> newPredictions = predictionResults
+                .stream()
+                .filter(p -> predictionResultRepository.findByLinkAndModel(p.getLink(), p.getModel()).isEmpty())
+                .toList();
+
+        newPredictions.forEach(predictionResult -> predictionResult.setTimestamp(timestampService.getCurrentTimestampString()));
+
+        logger.info("Saving {} predictions to prediction repository", newPredictions.size());
+
+        predictionResultRepository.saveAll(newPredictions);
     }
 
     @Override
