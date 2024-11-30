@@ -61,6 +61,7 @@ public class SecurityConfiguration {
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.addAllowedOriginPattern("http://localhost:*");
+        configuration.addAllowedOriginPattern("http://127.0.0.1:*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 

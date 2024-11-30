@@ -31,7 +31,10 @@ public class PredictionResultMapper {
         return PredictionResultResponse.builder()
                 .model(predictionResult.getModel())
                 .link(predictionResult.getLink())
+                .filePath(predictionResult.getFilePath())
                 .timestamp(predictionResult.getTimestamp())
+                .score(predictionResult.getScore())
+                .label(predictionResult.getLabel())
                 .modelPredictions(segmentPredictions)
                 .build();
     }

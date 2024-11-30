@@ -3,7 +3,7 @@ package com.eardefender.model.request;
 import com.eardefender.model.File;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.List;
@@ -18,6 +18,6 @@ public class ScraperReportRequest {
     private String analysisId;
 
     @Schema(description = "List of newly downloaded files")
-    @NotEmpty(message = "File list must not be empty")
+    @NotNull(message = "File list must not be null")
     private List<File> files;
 }

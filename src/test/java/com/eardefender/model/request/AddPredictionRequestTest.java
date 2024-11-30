@@ -44,17 +44,6 @@ public class AddPredictionRequestTest {
     }
 
     @Test
-    public void testInvalidAddPredictionsRequest_EmptyPredictions() {
-        request.setPredictionResults(List.of());
-
-        Set<ConstraintViolation<AddPredictionsRequest>> violations = validator.validate(request);
-
-        assertEquals(1, violations.size());
-        ConstraintViolation<AddPredictionsRequest> violation = violations.iterator().next();
-        assertEquals("Prediction results must not be empty", violation.getMessage());
-    }
-
-    @Test
     public void testInvalidAddPredictionsRequest_nullPredictions() {
         request.setPredictionResults(null);
 
@@ -62,6 +51,6 @@ public class AddPredictionRequestTest {
 
         assertEquals(1, violations.size());
         ConstraintViolation<AddPredictionsRequest> violation = violations.iterator().next();
-        assertEquals("Prediction results must not be empty", violation.getMessage());
+        assertEquals("Prediction results must not be null", violation.getMessage());
     }
 }
