@@ -2,11 +2,11 @@ package com.eardefender.model.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Schema(description = "Request Model for logging in and signing up")
-@Builder
+@SuperBuilder
 @Data
 public class CredentialsRequest {
 

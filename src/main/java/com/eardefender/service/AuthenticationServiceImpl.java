@@ -3,6 +3,7 @@ package com.eardefender.service;
 import com.eardefender.exception.UserAlreadyExistException;
 import com.eardefender.model.User;
 import com.eardefender.model.request.CredentialsRequest;
+import com.eardefender.model.request.SignUpRequest;
 import com.eardefender.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,12 +21,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public User signup(CredentialsRequest input) {
+    public User signup(SignUpRequest input) {
         userRepository.findByEmail(input.getEmail())
                 .ifPresent(u -> {throw new UserAlreadyExistException(u.getUsername());});
 
         User user = User.builder()
-                .fullName(input.getEmail())
+                .fullName(input.getName())
                 .email(input.getEmail())
                 .password(passwordEncoder.encode(input.getPassword()))
                 .build();
