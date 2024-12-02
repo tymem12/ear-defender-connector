@@ -3,6 +3,7 @@ package com.eardefender.service;
 import com.eardefender.exception.AnalysisNotFoundException;
 import com.eardefender.exception.UserNotOwnerException;
 import com.eardefender.model.Analysis;
+import com.eardefender.model.PredictionResult;
 import com.eardefender.model.User;
 import com.eardefender.model.request.AddPredictionsRequest;
 import com.eardefender.model.request.AnalysisRequest;
@@ -21,6 +22,7 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,7 +68,7 @@ class AnalysisServiceImplTest {
 
     @Test
     void beginAnalysis_SavesAnalysisAndCallsModelService() {
-        doNothing().when(scraperService).beginScraping(any());
+        doNothing().when(scraperService).beginScraping(any(), any());
         when(userService.getLoggedInUser()).thenReturn(user1);
         when(timestampService.getCurrentTimestampString()).thenReturn("timestamp");
 
@@ -87,7 +89,7 @@ class AnalysisServiceImplTest {
 
         assertEquals(user1.getId(), capturedAnalysis.getOwner());
 
-        verify(scraperService, times(1)).beginScraping(any());
+        verify(scraperService, times(1)).beginScraping(any(), any());
     }
 
     @Test
@@ -184,7 +186,7 @@ class AnalysisServiceImplTest {
     }
 
     @Test
-    void addPredictions_AnalysisInRepository_AddsPredictions() {
+    void addPredictions_AnalysisInRepositoryPredictions_AddsPredictions() {
         when(userService.getLoggedInUser()).thenReturn(user1);
         when(analysisRepository.findById(anyString())).thenReturn(Optional.of(analysisModel));
         when(predictionResultRepository.saveAll(any())).thenReturn(List.of());
@@ -211,6 +213,54 @@ class AnalysisServiceImplTest {
         when(predictionResultRepository.saveAll(any())).thenReturn(List.of());
 
         assertThrows(UserNotOwnerException.class, () -> analysisService.addPredictionResults(analysisModel.getId(), addPredictionsRequest));
+    }
+
+    @Test
+    void addPredictionResults_PredictionsNotInRepository_AddPredictionResults() {
+        when(userService.getLoggedInUser()).thenReturn(user1);
+        when(analysisRepository.findById(anyString())).thenReturn(Optional.of(analysisModel));
+        when(timestampService.getCurrentTimestampString()).thenReturn("current_timestamp");
+
+        when(predictionResultRepository.findByLinkAndModel(anyString(), anyString())).thenReturn(Optional.empty());
+
+        List<PredictionResult> savedPredictions = new ArrayList<>();
+        doAnswer(invocation -> {
+            List<PredictionResult> argument = invocation.getArgument(0);
+            savedPredictions.addAll(argument);
+            return null;
+        }).when(predictionResultRepository).saveAll(anyList());
+
+        Analysis result = analysisService.addPredictionResults(analysisModel.getId(), addPredictionsRequest);
+
+        assertEquals(2, savedPredictions.size());
+        assertTrue(savedPredictions.stream().allMatch(p -> "current_timestamp".equals(p.getTimestamp())));
+
+        verify(predictionResultRepository, times(1)).saveAll(anyList());
+        verify(predictionResultRepository, times(2)).findByLinkAndModel(anyString(), anyString());
+    }
+
+    @Test
+    void addPredictionResults_PredictionsInRepository_AddPredictionResults() {
+        when(userService.getLoggedInUser()).thenReturn(user1);
+        when(analysisRepository.findById(anyString())).thenReturn(Optional.of(analysisModel));
+        when(timestampService.getCurrentTimestampString()).thenReturn("current_timestamp");
+
+        when(predictionResultRepository.findByLinkAndModel(anyString(), anyString())).thenReturn(Optional.of(new PredictionResult()));
+
+        List<PredictionResult> savedPredictions = new ArrayList<>();
+        doAnswer(invocation -> {
+            List<PredictionResult> argument = invocation.getArgument(0);
+            savedPredictions.addAll(argument);
+            return null;
+        }).when(predictionResultRepository).saveAll(anyList());
+
+        Analysis result = analysisService.addPredictionResults(analysisModel.getId(), addPredictionsRequest);
+
+        assertEquals(0, savedPredictions.size());
+        assertTrue(result.getPredictionResults().stream().noneMatch(p -> "current_timestamp".equals(p.getTimestamp())));
+
+        verify(predictionResultRepository, times(0)).saveAll(anyList());
+        verify(predictionResultRepository, times(2)).findByLinkAndModel(anyString(), anyString());
     }
 
     @Test
@@ -266,6 +316,32 @@ class AnalysisServiceImplTest {
         when(userService.getLoggedInUser()).thenReturn(user2);
 
         assertThrows(UserNotOwnerException.class, () -> analysisService.finishAnalysis(analysisModel.getId(), "finish"));
+    }
+
+    @Test
+    void getAnalysisEnsuringOwnership_AnalysisInRepositoryUserOwner_ReturnsAnalysis() {
+        when(analysisRepository.findById(anyString())).thenReturn(Optional.of(analysisModel));
+        when(userService.getLoggedInUser()).thenReturn(user1);
+
+        Analysis result = analysisService.getAnalysisEnsuringOwnership(analysisModel.getId());
+
+        assertEquals(result, analysisModel);
+    }
+
+    @Test
+    void getAnalysisEnsuringOwnership_AnalysisInRepositoryUserNotOwner_ThrowsException() {
+        when(analysisRepository.findById(anyString())).thenReturn(Optional.of(analysisModel));
+        when(userService.getLoggedInUser()).thenReturn(user2);
+
+        assertThrows(UserNotOwnerException.class, () -> analysisService.getAnalysisEnsuringOwnership(analysisModel.getId()));
+    }
+
+    @Test
+    void getAnalysisEnsuringOwnership_AnalysisNotInRepositoryUserOwner_ThrowsException() {
+        when(analysisRepository.findById(anyString())).thenReturn(Optional.empty());
+        when(userService.getLoggedInUser()).thenReturn(user2);
+
+        assertThrows(AnalysisNotFoundException.class, () -> analysisService.getAnalysisEnsuringOwnership(analysisModel.getId()));
     }
 
     private void setUpModel() throws IOException {

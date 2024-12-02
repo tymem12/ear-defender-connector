@@ -1,0 +1,14 @@
+{
+  "analysisId": "id",
+  "model": "mesonet",
+  "files": [
+    {
+      "filePath": "path1",
+      "link": "link1"
+    },
+    {
+      "filePath": "path2",
+      "link": "link2"
+    }
+  ]
+}

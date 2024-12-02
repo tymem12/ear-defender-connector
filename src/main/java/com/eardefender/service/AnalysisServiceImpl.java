@@ -10,7 +10,6 @@ import com.eardefender.model.User;
 import com.eardefender.model.request.AddPredictionsRequest;
 import com.eardefender.model.request.AnalysisRequest;
 import com.eardefender.model.request.BeginAnalysisRequest;
-import com.eardefender.model.request.BeginScrapingRequest;
 import com.eardefender.repository.AnalysisRepository;
 import com.eardefender.repository.PredictionResultRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,36 +39,26 @@ public class AnalysisServiceImpl implements AnalysisService {
     public void beginAnalysis(BeginAnalysisRequest request) {
         logger.info("Starting new analysis");
 
-        InputParams inputParams = InputParams.builder()
-                .maxDepth(request.getDepth())
-                .model(request.getModel())
-                .maxFiles(request.getMaxFiles())
-                .startingPoint(request.getStartingPoint())
-                .maxPages(request.getMaxPages())
-                .maxTimePerFile(request.getMaxTimePerFile())
-                .maxTotalTime(request.getMaxTotalTime())
-                .build();
+        Analysis analysis = createInitialAnalysis(request);
 
-        Analysis analysis = Analysis.builder()
+        analysisRepository.save(analysis);
+
+        scraperService.beginScraping(analysis.getId(), analysis.getInputParams().clone());
+    }
+
+    private Analysis createInitialAnalysis(BeginAnalysisRequest request) {
+        InputParams inputParams = InputParams.createFromRequest(request);
+
+        return Analysis.builder()
                 .owner(userService.getLoggedInUser().getId())
                 .timestamp(timestampService.getCurrentTimestampString())
                 .status(STATUS_INITIALIZING)
                 .inputParams(inputParams).build();
-
-        analysis.setInputParams(inputParams);
-
-        analysisRepository.save(analysis);
-
-        BeginScrapingRequest beginScrapingRequest = new BeginScrapingRequest();
-        beginScrapingRequest.setAnalysisId(analysis.getId());
-        beginScrapingRequest.setInputParams(analysis.getInputParams().clone());
-
-        scraperService.beginScraping(beginScrapingRequest);
     }
 
     @Override
     public Analysis getById(String id) throws AnalysisNotFoundException {
-        return getAnalysisOrElseThrow(id);
+        return getAnalysisEnsuringOwnership(id);
     }
 
     @Override
@@ -79,7 +68,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     public Analysis update(String id, AnalysisRequest analysisRequest) throws AnalysisNotFoundException {
-        Analysis analysis = getAnalysisOrElseThrow(id);
+        Analysis analysis = getAnalysisEnsuringOwnership(id);
 
         Analysis updatedAnalysis = AnalysisMapper.updateFromRequest(analysis, analysisRequest);
         analysisRepository.save(updatedAnalysis);
@@ -88,7 +77,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     public void deleteById(String id) throws AnalysisNotFoundException {
-        getAnalysisOrElseThrow(id);
+        getAnalysisEnsuringOwnership(id);
 
         analysisRepository.deleteById(id);
     }
@@ -97,7 +86,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     public Analysis addPredictionResults(String id, AddPredictionsRequest addPredictionsRequest) throws AnalysisNotFoundException {
         logger.info("Adding {} predictions to analysis {}", addPredictionsRequest.getPredictionResults().size(), id);
 
-        Analysis analysis = getAnalysisOrElseThrow(id);
+        Analysis analysis = getAnalysisEnsuringOwnership(id);
 
         saveNewPredictions(addPredictionsRequest.getPredictionResults());
 
@@ -116,11 +105,15 @@ public class AnalysisServiceImpl implements AnalysisService {
                 .filter(p -> predictionResultRepository.findByLinkAndModel(p.getLink(), p.getModel()).isEmpty())
                 .toList();
 
-        newPredictions.forEach(predictionResult -> predictionResult.setTimestamp(timestampService.getCurrentTimestampString()));
+        if (!newPredictions.isEmpty()) {
+            String currentTimestamp = timestampService.getCurrentTimestampString();
 
-        logger.info("Saving {} predictions to prediction repository", newPredictions.size());
+            newPredictions.forEach(predictionResult -> predictionResult.setTimestamp(currentTimestamp));
 
-        predictionResultRepository.saveAll(newPredictions);
+            logger.info("Saving {} predictions to prediction repository", newPredictions.size());
+
+            predictionResultRepository.saveAll(newPredictions);
+        }
     }
 
     private void updateAnalysisPredictions(Analysis analysis, List<PredictionResult> newPredictions) {
@@ -135,7 +128,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     public Analysis updateStatus(String id, String status) throws AnalysisNotFoundException {
         logger.info("Changing status of analysis {} to {}", id, status);
 
-        Analysis analysis = getAnalysisOrElseThrow(id);
+        Analysis analysis = getAnalysisEnsuringOwnership(id);
 
         analysis.setStatus(status);
 
@@ -148,7 +141,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     public Analysis finishAnalysis(String id, String finalStatus) throws AnalysisNotFoundException {
         logger.info("Finishing analysis {} with {} final status", id, finalStatus);
 
-        Analysis analysis = getAnalysisOrElseThrow(id);
+        Analysis analysis = getAnalysisEnsuringOwnership(id);
 
         analysis.setStatus(finalStatus);
         analysis.setDuration(getDuration(analysis));
@@ -178,7 +171,8 @@ public class AnalysisServiceImpl implements AnalysisService {
                 : 0;
     }
 
-    private Analysis getAnalysisOrElseThrow(String id) {
+    @Override
+    public Analysis getAnalysisEnsuringOwnership(String id) {
         Analysis analysis = analysisRepository.findById(id).orElseThrow(() -> new AnalysisNotFoundException(id));
 
         throwExceptionIfUserIsNotOwner(analysis);

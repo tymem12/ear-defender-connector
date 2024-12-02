@@ -7,8 +7,8 @@ import lombok.Data;
 
 import java.util.List;
 
-@Data
 @Schema(description = "Request model for adding prediction results")
+@Data
 public class AddPredictionsRequest {
 
     @NotNull(message = "Prediction results must not be null")

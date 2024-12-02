@@ -1,5 +1,6 @@
 package com.eardefender.model;
 
+import com.eardefender.model.request.BeginAnalysisRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,5 +48,17 @@ public class InputParams implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    public static InputParams createFromRequest(BeginAnalysisRequest request) {
+        return InputParams.builder()
+                .maxDepth(request.getDepth())
+                .model(request.getModel())
+                .maxFiles(request.getMaxFiles())
+                .startingPoint(request.getStartingPoint())
+                .maxPages(request.getMaxPages())
+                .maxTimePerFile(request.getMaxTimePerFile())
+                .maxTotalTime(request.getMaxTotalTime())
+                .build();
     }
 }
