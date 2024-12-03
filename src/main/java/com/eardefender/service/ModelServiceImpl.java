@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -44,14 +45,18 @@ public class ModelServiceImpl implements ModelService {
                 request,
                 restTemplate,
                 logger,
-                r -> {
-                    logger.info("Processing started successfully for analysis ID: {}", startProcessingRequest.getAnalysisId());
-                    analysisService.updateStatus(startProcessingRequest.getAnalysisId(), STATUS_PROCESSING);
-                },
-                r -> {
-                    logger.error("Failed to start processing. Response status: {}", r.getStatusCode());
-                    analysisService.finishAnalysis(startProcessingRequest.getAnalysisId(), STATUS_ABORTED);
-                    throw new RestRequestException("Failed to start processing. Response status: " + r.getStatusCode());
-                });
+                r -> processSuccessfulModelRequest(startProcessingRequest, r.getStatusCode()),
+                r -> processFailedModelRequest(startProcessingRequest, r.getStatusCode()));
+    }
+
+    private void processSuccessfulModelRequest(BeginProcessingRequest request, HttpStatusCode httpStatusCode) {
+        logger.info("Processing started successfully for analysis ID: {}. Response status: {}", request.getAnalysisId(), httpStatusCode);
+        analysisService.updateStatus(request.getAnalysisId(), STATUS_PROCESSING);
+    }
+
+    private void processFailedModelRequest(BeginProcessingRequest request, HttpStatusCode httpStatusCode) {
+        logger.error("Failed to start processing. Response status: {}", httpStatusCode);
+        analysisService.finishAnalysis(request.getAnalysisId(), STATUS_ABORTED);
+        throw new RestRequestException("Failed to start processing. Response status: " + httpStatusCode);
     }
 }

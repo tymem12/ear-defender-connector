@@ -29,7 +29,8 @@ public class ScraperController {
     })
     @PostMapping("/report")
     public ResponseEntity<Void> reportScrapingResults(@RequestBody @Valid ScraperReportRequest scraperReportRequest) {
-        scraperService.reportScrapingResults(scraperReportRequest);
+        scraperService.reportScrapingResults(scraperReportRequest.getAnalysisId(), scraperReportRequest.getFiles());
+
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

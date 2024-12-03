@@ -5,12 +5,18 @@ import com.eardefender.validation.Model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Schema(description = "Request Model for starting processing files through the Model API")
+@Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class BeginProcessingRequest {
 
     @Schema(description = "Unique identifier for the analysis",

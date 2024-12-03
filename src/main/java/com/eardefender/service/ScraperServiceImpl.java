@@ -3,10 +3,10 @@ package com.eardefender.service;
 import com.eardefender.exception.AnalysisNotFoundException;
 import com.eardefender.exception.RestRequestException;
 import com.eardefender.model.Analysis;
+import com.eardefender.model.File;
+import com.eardefender.model.InputParams;
 import com.eardefender.model.request.BeginScrapingRequest;
-import com.eardefender.model.request.ScraperReportRequest;
 import com.eardefender.model.request.BeginProcessingRequest;
-import com.eardefender.repository.AnalysisRepository;
 import com.eardefender.util.RestRequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +14,11 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 import static com.eardefender.constants.EarDefenderConstants.*;
 
@@ -28,7 +31,6 @@ public class ScraperServiceImpl implements ScraperService {
     @Value("${scraper.api.server.url}")
     private final String serverUrl;
 
-    private final AnalysisRepository analysisRepository;
     private final ModelService modelService;
     private final RestTemplate restTemplate;
     private final HttpServletRequest request;
@@ -42,8 +44,13 @@ public class ScraperServiceImpl implements ScraperService {
     }
 
     @Override
-    public void beginScraping(BeginScrapingRequest beginScrapingRequest) throws AnalysisNotFoundException {
-        logger.info("Starting scraping process for analysis ID: {}", beginScrapingRequest.getAnalysisId());
+    public void beginScraping(String analysisId, InputParams inputParams) throws AnalysisNotFoundException {
+        logger.info("Starting scraping process for analysis ID: {}", analysisId);
+
+        BeginScrapingRequest beginScrapingRequest = BeginScrapingRequest.builder()
+                .analysisId(analysisId)
+                .inputParams(inputParams)
+                .build();
 
         RestRequestUtil.sendPostRequestWithAuth(
                 serverUrl + URL_PATH_BEGIN_SCRAPING,
@@ -51,35 +58,41 @@ public class ScraperServiceImpl implements ScraperService {
                 request,
                 restTemplate,
                 logger,
-                r -> {
-                    logger.info("Scraping process started successfully for analysis ID: {}", beginScrapingRequest.getAnalysisId());
-                    analysisService.updateStatus(beginScrapingRequest.getAnalysisId(), STATUS_SCRAPPING);
-                },
-                r -> {
-                    logger.error("Failed to start scraping. Response status: {}", r.getStatusCode());
-                    analysisService.finishAnalysis(beginScrapingRequest.getAnalysisId(), STATUS_ABORTED);
-                    throw new RestRequestException("Failed to start scraping. Response status: " + r.getStatusCode());
-                });
+                r -> processSuccessfulScrapingRequest(beginScrapingRequest, r.getStatusCode()),
+                r -> processFailedScrapingRequest(beginScrapingRequest, r.getStatusCode()));
+    }
+
+    private void processSuccessfulScrapingRequest(BeginScrapingRequest request, HttpStatusCode httpStatusCode) {
+        logger.info("Scraping process started successfully for analysis ID: {}. Response status: {}", request.getAnalysisId(), httpStatusCode);
+        analysisService.updateStatus(request.getAnalysisId(), STATUS_SCRAPPING);
+    }
+
+    private void processFailedScrapingRequest(BeginScrapingRequest request, HttpStatusCode httpStatusCode) {
+        logger.error("Failed to start scraping. Response status: {}", httpStatusCode);
+        analysisService.finishAnalysis(request.getAnalysisId(), STATUS_ABORTED);
+        throw new RestRequestException("Failed to start scraping. Response status: " + httpStatusCode);
     }
 
     @Override
-    public void reportScrapingResults(ScraperReportRequest scraperReportRequest) {
-        logger.info("Received scraper request for analysis: {}", scraperReportRequest.getAnalysisId());
+    public void reportScrapingResults(String analysisId, List<File> files) {
+        logger.info("Received scraper request for analysis: {}", analysisId);
 
-        Analysis analysis = analysisRepository
-                .findById(scraperReportRequest.getAnalysisId())
-                .orElseThrow(() -> new AnalysisNotFoundException(scraperReportRequest.getAnalysisId()));
-
-        BeginProcessingRequest startProcessingRequest = new BeginProcessingRequest();
-        startProcessingRequest.setModel(analysis.getInputParams().getModel());
-        startProcessingRequest.setAnalysisId(scraperReportRequest.getAnalysisId());
-
-        startProcessingRequest.setFiles(scraperReportRequest.getFiles());
-
-        if (scraperReportRequest.getFiles() == null || scraperReportRequest.getFiles().isEmpty()) {
-            analysisService.finishAnalysis(analysis.getId(), STATUS_FINISHED);
+        if (files == null || files.isEmpty()) {
+            analysisService.finishAnalysis(analysisId, STATUS_FINISHED);
         } else {
-            modelService.startProcessing(startProcessingRequest);
+            beginProcessing(analysisId,files);
         }
+    }
+
+    private void beginProcessing(String analysisId, List<File> fileList) {
+        Analysis analysis = analysisService.getAnalysisEnsuringOwnership(analysisId);
+
+        BeginProcessingRequest beginProcessingRequest = BeginProcessingRequest.builder()
+                .analysisId(analysis.getId())
+                .model(analysis.getInputParams().getModel())
+                .files(fileList)
+                .build();
+
+        modelService.startProcessing(beginProcessingRequest);
     }
 }

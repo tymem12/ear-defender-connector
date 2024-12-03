@@ -28,20 +28,12 @@ public class RestRequestUtil {
 
         HttpEntity<T> requestEntity = new HttpEntity<>(body, headers);
 
-        ResponseEntity<Void> response = restTemplate.exchange(
+        return restTemplate.exchange(
                 url,
                 POST,
                 requestEntity,
                 Void.class
         );
-
-        if (response.getStatusCode().is2xxSuccessful()) {
-            logger.info("Request to sent successfully to {}, request body: {}", url, body.toString());
-        } else {
-            logger.error("Failed to sent request to {}. Response status: {}, Request body: {}", url, response.getStatusCode(), body.toString());
-        }
-
-        return response;
     }
 
     public static <T> ResponseEntity<Void> sendPostRequestWithAuth(String url,

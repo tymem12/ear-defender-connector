@@ -10,13 +10,11 @@ import com.eardefender.model.User;
 import com.eardefender.model.request.AddPredictionsRequest;
 import com.eardefender.model.request.AnalysisRequest;
 import com.eardefender.model.request.BeginAnalysisRequest;
-import com.eardefender.model.request.BeginScrapingRequest;
 import com.eardefender.repository.AnalysisRepository;
 import com.eardefender.repository.PredictionResultRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -41,42 +39,26 @@ public class AnalysisServiceImpl implements AnalysisService {
     public void beginAnalysis(BeginAnalysisRequest request) {
         logger.info("Starting new analysis");
 
-        InputParams inputParams = InputParams.builder()
-                .maxDepth(request.getDepth())
-                .model(request.getModel())
-                .maxFiles(request.getMaxFiles())
-                .startingPoint(request.getStartingPoint())
-                .maxPages(request.getMaxPages())
-                .maxTimePerFile(request.getMaxTimePerFile())
-                .maxTotalTime(request.getMaxTotalTime())
-                .build();
+        Analysis analysis = createInitialAnalysis(request);
 
-        Analysis analysis = Analysis.builder()
+        analysisRepository.save(analysis);
+
+        scraperService.beginScraping(analysis.getId(), analysis.getInputParams().clone());
+    }
+
+    private Analysis createInitialAnalysis(BeginAnalysisRequest request) {
+        InputParams inputParams = InputParams.createFromRequest(request);
+
+        return Analysis.builder()
                 .owner(userService.getLoggedInUser().getId())
                 .timestamp(timestampService.getCurrentTimestampString())
                 .status(STATUS_INITIALIZING)
                 .inputParams(inputParams).build();
-
-        analysis.setInputParams(inputParams);
-
-        analysisRepository.save(analysis);
-
-        BeginScrapingRequest beginScrapingRequest = new BeginScrapingRequest();
-        beginScrapingRequest.setAnalysisId(analysis.getId());
-        beginScrapingRequest.setInputParams(analysis.getInputParams().clone());
-
-        scraperService.beginScraping(beginScrapingRequest);
     }
 
     @Override
     public Analysis getById(String id) throws AnalysisNotFoundException {
-        Analysis foundAnalysis = analysisRepository
-                .findById(id)
-                .orElseThrow(() -> new AnalysisNotFoundException(id));
-
-        throwExceptionIfUserIsNotOwner(foundAnalysis);
-
-        return foundAnalysis;
+        return getAnalysisEnsuringOwnership(id);
     }
 
     @Override
@@ -86,9 +68,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     public Analysis update(String id, AnalysisRequest analysisRequest) throws AnalysisNotFoundException {
-        Analysis analysis = analysisRepository.findById(id).orElseThrow(() -> new AnalysisNotFoundException(id));
-
-        throwExceptionIfUserIsNotOwner(analysis);
+        Analysis analysis = getAnalysisEnsuringOwnership(id);
 
         Analysis updatedAnalysis = AnalysisMapper.updateFromRequest(analysis, analysisRequest);
         analysisRepository.save(updatedAnalysis);
@@ -97,33 +77,20 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     public void deleteById(String id) throws AnalysisNotFoundException {
-        Analysis foundAnalysis = analysisRepository
-                .findById(id)
-                .orElseThrow(() -> new AnalysisNotFoundException(id));
+        getAnalysisEnsuringOwnership(id);
 
-        throwExceptionIfUserIsNotOwner(foundAnalysis);
-
-         analysisRepository.deleteById(id);
+        analysisRepository.deleteById(id);
     }
 
-    @Transactional
     @Override
     public Analysis addPredictionResults(String id, AddPredictionsRequest addPredictionsRequest) throws AnalysisNotFoundException {
         logger.info("Adding {} predictions to analysis {}", addPredictionsRequest.getPredictionResults().size(), id);
 
-        Analysis analysis = analysisRepository.findById(id).orElseThrow(() -> new AnalysisNotFoundException(id));
-
-        throwExceptionIfUserIsNotOwner(analysis);
+        Analysis analysis = getAnalysisEnsuringOwnership(id);
 
         saveNewPredictions(addPredictionsRequest.getPredictionResults());
 
-        List<PredictionResult> updatedPredictionList = new ArrayList<>(addPredictionsRequest.getPredictionResults());
-
-        if (analysis.getPredictionResults() != null) {
-            updatedPredictionList.addAll(analysis.getPredictionResults());
-        }
-
-        analysis.setPredictionResults(updatedPredictionList);
+        updateAnalysisPredictions(analysis, addPredictionsRequest.getPredictionResults());
 
         logger.info("Saving analysis with {} predictions to analysis repository", analysis.getPredictionResults().size());
 
@@ -132,26 +99,36 @@ public class AnalysisServiceImpl implements AnalysisService {
         return analysis;
     }
 
-    private void saveNewPredictions(List<PredictionResult> predictionResults) {
-        List<PredictionResult> newPredictions = predictionResults
+    private synchronized void saveNewPredictions(List<PredictionResult> allPredictionResults) {
+        List<PredictionResult> newPredictions = allPredictionResults
                 .stream()
                 .filter(p -> predictionResultRepository.findByLinkAndModel(p.getLink(), p.getModel()).isEmpty())
                 .toList();
 
-        newPredictions.forEach(predictionResult -> predictionResult.setTimestamp(timestampService.getCurrentTimestampString()));
+        if (!newPredictions.isEmpty()) {
+            String currentTimestamp = timestampService.getCurrentTimestampString();
 
-        logger.info("Saving {} predictions to prediction repository", newPredictions.size());
+            newPredictions.forEach(predictionResult -> predictionResult.setTimestamp(currentTimestamp));
 
-        predictionResultRepository.saveAll(newPredictions);
+            logger.info("Saving {} predictions to prediction repository", newPredictions.size());
+
+            predictionResultRepository.saveAll(newPredictions);
+        }
+    }
+
+    private void updateAnalysisPredictions(Analysis analysis, List<PredictionResult> newPredictions) {
+        List<PredictionResult> updatedPredictionList = new ArrayList<>(newPredictions);
+        if (analysis.getPredictionResults() != null) {
+            updatedPredictionList.addAll(analysis.getPredictionResults());
+        }
+        analysis.setPredictionResults(updatedPredictionList);
     }
 
     @Override
     public Analysis updateStatus(String id, String status) throws AnalysisNotFoundException {
         logger.info("Changing status of analysis {} to {}", id, status);
 
-        Analysis analysis = analysisRepository.findById(id).orElseThrow(() -> new AnalysisNotFoundException(id));
-
-        throwExceptionIfUserIsNotOwner(analysis);
+        Analysis analysis = getAnalysisEnsuringOwnership(id);
 
         analysis.setStatus(status);
 
@@ -164,25 +141,22 @@ public class AnalysisServiceImpl implements AnalysisService {
     public Analysis finishAnalysis(String id, String finalStatus) throws AnalysisNotFoundException {
         logger.info("Finishing analysis {} with {} final status", id, finalStatus);
 
-        Analysis analysis = analysisRepository.findById(id).orElseThrow(() -> new AnalysisNotFoundException(id));
-
-        throwExceptionIfUserIsNotOwner(analysis);
+        Analysis analysis = getAnalysisEnsuringOwnership(id);
 
         analysis.setStatus(finalStatus);
-
-        OffsetDateTime startTimestamp = timestampService.getTimestampFromString(analysis.getTimestamp());
-        OffsetDateTime finishTimestamp = timestampService.getCurrentTimestamp();
-        Duration duration = Duration.between(startTimestamp, finishTimestamp);
-        analysis.setDuration(duration.getSeconds());
-
-        analysis.setFileCount(getFileCount(analysis));
-
+        analysis.setDuration(getDuration(analysis));
         analysis.setDeepfakeFileCount(getDeepfakeFileCount(analysis));
         analysis.setFileCount(getFileCount(analysis));
 
         analysisRepository.save(analysis);
 
         return analysis;
+    }
+
+    private Long getDuration(Analysis analysis) {
+        OffsetDateTime startTimestamp = timestampService.getTimestampFromString(analysis.getTimestamp());
+        OffsetDateTime finishTimestamp = timestampService.getCurrentTimestamp();
+        return Duration.between(startTimestamp, finishTimestamp).getSeconds();
     }
 
     private int getFileCount(Analysis analysis) {
@@ -195,6 +169,15 @@ public class AnalysisServiceImpl implements AnalysisService {
         return analysis.getPredictionResults() != null
                 ? (int) analysis.getPredictionResults().stream().filter(p -> p.getLabel().equals(LABEL_POSITIVE)).count()
                 : 0;
+    }
+
+    @Override
+    public Analysis getAnalysisEnsuringOwnership(String id) {
+        Analysis analysis = analysisRepository.findById(id).orElseThrow(() -> new AnalysisNotFoundException(id));
+
+        throwExceptionIfUserIsNotOwner(analysis);
+
+        return analysis;
     }
 
     private void throwExceptionIfUserIsNotOwner(Analysis analysis) {

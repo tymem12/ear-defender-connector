@@ -4,7 +4,7 @@
 
 After launching application visit this URL for documentation:
 
-If run manually: http://localhost:8080/swagger-ui/index.html
+If run locally: http://localhost:8080/swagger-ui/index.html
 
 If run with docker-compose then: http://localhost:9090/swagger-ui/index.html
 

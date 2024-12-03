@@ -25,4 +25,6 @@ public interface AnalysisService {
     Analysis updateStatus(String id, String status) throws AnalysisNotFoundException;
 
     Analysis finishAnalysis(String id, String finalStatus) throws AnalysisNotFoundException;
+
+    Analysis getAnalysisEnsuringOwnership(String id);
 }

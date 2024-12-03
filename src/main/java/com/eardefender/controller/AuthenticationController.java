@@ -2,6 +2,7 @@ package com.eardefender.controller;
 
 import com.eardefender.model.User;
 import com.eardefender.model.request.CredentialsRequest;
+import com.eardefender.model.request.SignUpRequest;
 import com.eardefender.model.response.LoginResponse;
 import com.eardefender.service.AuthenticationService;
 import com.eardefender.service.JwtService;
@@ -33,8 +34,8 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "409", description = "Account with given email already exist.", content = @Content),
     })
     @PostMapping("/signup")
-    public ResponseEntity<User> register(@RequestBody CredentialsRequest credentialsRequest) {
-        User registeredUser = authenticationService.signup(credentialsRequest);
+    public ResponseEntity<User> register(@RequestBody SignUpRequest signUpRequest) {
+        User registeredUser = authenticationService.signup(signUpRequest);
 
         return ResponseEntity.ok(registeredUser);
     }

@@ -3,6 +3,7 @@ package com.eardefender.service;
 import com.eardefender.exception.UserAlreadyExistException;
 import com.eardefender.model.User;
 import com.eardefender.model.request.CredentialsRequest;
+import com.eardefender.model.request.SignUpRequest;
 import com.eardefender.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,12 +33,14 @@ public class AuthenticationServiceImplTest {
     private AuthenticationServiceImpl authenticationService;
 
     private User user;
-    private CredentialsRequest request;
+    private CredentialsRequest credentialsRequest;
+    private SignUpRequest signUpRequest;
 
     @BeforeEach
     protected void setUp() throws Exception {
         setUpUser();
-        setUpRequest();
+        setUpCredentialRequests();
+        setUpSignUpRequests();
 
         MockitoAnnotations.openMocks(this);
     }
@@ -46,7 +49,7 @@ public class AuthenticationServiceImplTest {
     public void signUp_UserAlreadyExists_ThrowsException() {
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
 
-        assertThrows(UserAlreadyExistException.class, () -> authenticationService.signup(request));
+        assertThrows(UserAlreadyExistException.class, () -> authenticationService.signup(signUpRequest));
     }
 
     @Test
@@ -55,7 +58,7 @@ public class AuthenticationServiceImplTest {
         when(passwordEncoder.encode(anyString())).thenReturn("encoded");
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        User result = authenticationService.signup(request);
+        User result = authenticationService.signup(signUpRequest);
 
         verify(userRepository, times(1)).findByEmail(anyString());
         verify(passwordEncoder, times(1)).encode(anyString());
@@ -68,7 +71,7 @@ public class AuthenticationServiceImplTest {
     public void authenticate_UserExists_AuthenticateUser() {
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
 
-        User result = authenticationService.authenticate(request);
+        User result = authenticationService.authenticate(credentialsRequest);
 
         assertEquals(user, result);
     }
@@ -77,7 +80,7 @@ public class AuthenticationServiceImplTest {
     public void authenticate_UserNotExists_DoesNotAuthenticateUser() {
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(UsernameNotFoundException.class, () -> authenticationService.authenticate(request));
+        assertThrows(UsernameNotFoundException.class, () -> authenticationService.authenticate(credentialsRequest));
     }
 
     private void setUpUser() {
@@ -85,13 +88,22 @@ public class AuthenticationServiceImplTest {
                 .id("uuid")
                 .email("email@email.com")
                 .password("passwordHash")
+                .fullName("name")
                 .build();
     }
 
-    private void setUpRequest() {
-        request = CredentialsRequest.builder()
+    private void setUpCredentialRequests() {
+        credentialsRequest = CredentialsRequest.builder()
                 .email("new@email.com")
                 .password("newPass")
+                .build();
+    }
+
+    private void setUpSignUpRequests() {
+        signUpRequest = SignUpRequest.builder()
+                .email("new@email.com")
+                .password("newPass")
+                .name("name")
                 .build();
     }
 }
