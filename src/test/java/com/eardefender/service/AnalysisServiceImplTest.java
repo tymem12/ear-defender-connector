@@ -344,6 +344,15 @@ class AnalysisServiceImplTest {
         assertThrows(AnalysisNotFoundException.class, () -> analysisService.getAnalysisEnsuringOwnership(analysisModel.getId()));
     }
 
+    @Test
+    void getAnalysisEnsuringOwnership_OwnerIsNull_ThrowsException() {
+        analysisModel.setOwner(null);
+        when(analysisRepository.findById(anyString())).thenReturn(Optional.of(analysisModel));
+        when(userService.getLoggedInUser()).thenReturn(user1);
+
+        assertThrows(UserNotOwnerException.class, () -> analysisService.getAnalysisEnsuringOwnership(analysisModel.getId()));
+    }
+
     private void setUpModel() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
 

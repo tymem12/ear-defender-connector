@@ -18,9 +18,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 
-import static com.eardefender.constants.EarDefenderConstants.STATUS_ABORTED;
-import static com.eardefender.constants.EarDefenderConstants.STATUS_SCRAPPING;
+import static com.eardefender.constants.EarDefenderConstants.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -69,6 +69,26 @@ class ScraperServiceImplTest {
         when(analysisService.getAnalysisEnsuringOwnership(anyString())).thenThrow(new AnalysisNotFoundException("id"));
 
         assertThrows(AnalysisNotFoundException.class, () -> scraperService.reportScrapingResults(scraperReportRequest.getAnalysisId(), scraperReportRequest.getFiles()));
+    }
+
+    @Test
+    void reportScrapingResults_FilesAreNull_AnalysisFinishes() {
+        when(analysisService.getAnalysisEnsuringOwnership(anyString())).thenReturn(analysis);
+
+        scraperService.reportScrapingResults(scraperReportRequest.getAnalysisId(), null);
+
+        verify(analysisService, times(0)).getAnalysisEnsuringOwnership(anyString());
+        verify(analysisService, times(1)).finishAnalysis(analysis.getId(), STATUS_FINISHED);
+    }
+
+    @Test
+    void reportScrapingResults_FilesAreEmpty_AnalysisFinishes() {
+        when(analysisService.getAnalysisEnsuringOwnership(anyString())).thenReturn(analysis);
+
+        scraperService.reportScrapingResults(scraperReportRequest.getAnalysisId(), Collections.emptyList());
+
+        verify(analysisService, times(0)).getAnalysisEnsuringOwnership(anyString());
+        verify(analysisService, times(1)).finishAnalysis(analysis.getId(), STATUS_FINISHED);
     }
 
     @Test
