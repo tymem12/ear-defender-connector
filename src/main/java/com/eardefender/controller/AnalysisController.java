@@ -28,6 +28,7 @@ import static com.eardefender.constants.EarDefenderConstants.STATUS_FINISHED;
 @RestController
 @RequestMapping("/analyses")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class AnalysisController {
 
     private final AnalysisService analysisService;

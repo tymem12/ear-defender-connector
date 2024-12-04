@@ -21,6 +21,7 @@ import java.util.List;
 @RequestMapping("/predictions")
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class PredictionResultController {
 
     private final PredictionResultService predictionResultService;

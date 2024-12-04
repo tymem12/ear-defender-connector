@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/scraper")
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class ScraperController {
     private final ScraperService scraperService;
 
