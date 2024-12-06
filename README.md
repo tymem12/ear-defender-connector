@@ -1,5 +1,8 @@
 # EarDefender_connector
 
+The connector module is responsible for communication with database, managing internal analyses state and communication between the modules. It uses
+spring framework with REST architecture to allow other modules easy and consistent communication.
+
 ## Documentation
 
 After launching application visit this URL for documentation:
