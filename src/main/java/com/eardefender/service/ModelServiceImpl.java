@@ -22,7 +22,7 @@ public class ModelServiceImpl implements ModelService {
     private final Logger logger;
 
     @Value("${model.api.server.url}")
-    private final String serverUrl;
+    private final String modelApiUrl;
 
     private final RestTemplate restTemplate;
     private final HttpServletRequest request;
@@ -40,7 +40,7 @@ public class ModelServiceImpl implements ModelService {
         logger.info("Starting processing for analysis ID: {}", startProcessingRequest.getAnalysisId());
 
         RestRequestUtil.sendPostRequestWithAuth(
-                serverUrl + URL_PATH_RUN_MODEL,
+                modelApiUrl + URL_PATH_RUN_MODEL,
                 startProcessingRequest,
                 request,
                 restTemplate,

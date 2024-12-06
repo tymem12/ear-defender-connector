@@ -29,7 +29,7 @@ public class ScraperServiceImpl implements ScraperService {
     private final Logger logger;
 
     @Value("${scraper.api.server.url}")
-    private final String serverUrl;
+    private final String scraperApiUrl;
 
     private final ModelService modelService;
     private final RestTemplate restTemplate;
@@ -53,7 +53,7 @@ public class ScraperServiceImpl implements ScraperService {
                 .build();
 
         RestRequestUtil.sendPostRequestWithAuth(
-                serverUrl + URL_PATH_BEGIN_SCRAPING,
+                scraperApiUrl + URL_PATH_BEGIN_SCRAPING,
                 beginScrapingRequest,
                 request,
                 restTemplate,

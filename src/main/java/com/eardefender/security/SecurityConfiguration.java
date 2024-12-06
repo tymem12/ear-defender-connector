@@ -1,5 +1,7 @@
 package com.eardefender.security;
 
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,10 +21,18 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@Getter
 public class SecurityConfiguration {
 
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Value("${frontend.server.url}")
+    private String frontendServerUrl;
+    @Value("${model.api.server.url}")
+    private String modelApiServerUrl;
+    @Value("${scraper.api.server.url}")
+    private String scraperApiServerUrl;
 
     public SecurityConfiguration(
             JwtAuthenticationFilter jwtAuthenticationFilter,
@@ -57,7 +67,9 @@ public class SecurityConfiguration {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOriginPatterns(List.of(
-                "http://34.77.80.233:8080",
+                frontendServerUrl,
+                modelApiServerUrl,
+                scraperApiServerUrl,
                 "http://0.0.0.0:*",
                 "http://localhost:*",
                 "http://127.0.0.1:*"
