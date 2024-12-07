@@ -6,6 +6,8 @@ import com.eardefender.model.request.SignUpRequest;
 import com.eardefender.model.response.LoginResponse;
 import com.eardefender.service.AuthenticationService;
 import com.eardefender.service.JwtService;
+import com.eardefender.validation.group.SignInRequestGroup;
+import com.eardefender.validation.group.SignUpRequestGroup;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,7 +34,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "409", description = "Account with given email already exist.", content = @Content),
     })
     @PostMapping("/signup")
-    public ResponseEntity<User> register(@RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<User> register(@Validated(SignUpRequestGroup.class) @RequestBody SignUpRequest signUpRequest) {
         User registeredUser = authenticationService.signup(signUpRequest);
 
         return ResponseEntity.ok(registeredUser);
@@ -44,7 +46,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "200", description = "Token generated successfully"),
     })
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody CredentialsRequest loginUserDto) {
+    public ResponseEntity<LoginResponse> authenticate(@Validated(SignInRequestGroup.class) @RequestBody CredentialsRequest loginUserDto) {
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
