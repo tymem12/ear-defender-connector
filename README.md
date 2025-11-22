@@ -38,7 +38,7 @@ Docker Compose run:
 
 ---
 
-⚙️ Launch Instructions
+## ⚙️ Launch Instructions
 
 Using Docker Compose (recommended)
 
