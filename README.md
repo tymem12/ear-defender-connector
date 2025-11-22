@@ -20,7 +20,6 @@ Its responsibilities include:
 The Connector is built using **Spring Boot** and exposes a well-documented REST interface for seamless integration with other services.
 
 
----
 
 ## 📘 API Documentation
 
@@ -35,8 +34,6 @@ Docker Compose run:
 👉 http://localhost:9090/swagger-ui/index.html
 
 
-
----
 
 ## ⚙️ Launch Instructions
 
@@ -64,7 +61,6 @@ Manual Build & Run
 `docker-compose up`
 
 
----
 
 ## 🧪 Test Coverage (JaCoCo)
 
