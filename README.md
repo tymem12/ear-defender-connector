@@ -25,23 +25,22 @@ The Connector is built using **Spring Boot** and exposes a well-documented REST 
 
 Swagger UI is available after launching the service:
 
-Local run:
+**Local run:**
 
 👉 http://localhost:8080/swagger-ui/index.html
 
-Docker Compose run:
+**Docker Compose run:**
 
 👉 http://localhost:9090/swagger-ui/index.html
 
 
-
 ## ⚙️ Launch Instructions
 
-Using Docker Compose (recommended)
+**Using Docker Compose (recommended)**
 
 `docker-compose up --build`
 
-Manual Build & Run
+**Manual Build & Run**
 
 1. Install and start Docker Desktop
 
