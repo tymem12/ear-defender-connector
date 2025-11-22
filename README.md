@@ -1,41 +1,77 @@
-# EarDefender_connector
+# 🔗 EarDefender – Connector
 
-The connector module is responsible for communication with database, managing internal analyses state and communication between the modules. It uses
-spring framework with REST architecture to allow other modules easy and consistent communication.
+**Service orchestration, analysis coordination & inter-module communication**
 
-## Documentation
+## 🚀 Overview
 
-After launching application visit this URL for documentation:
+The **Connector** module is the central coordination service within the EarDefender architecture.
 
-If run locally: http://localhost:8080/swagger-ui/index.html
+Its responsibilities include:
 
-If run with docker-compose then: http://localhost:9090/swagger-ui/index.html
+- Managing the internal state of ongoing analyses
+
+- Handling communication between the Scraper, Detector, and Frontend modules
+
+- Providing a consistent REST API for all system interactions
+
+- Storing and accessing metadata in the database
 
 
-## Launch
+The Connector is built using **Spring Boot** and exposes a well-documented REST interface for seamless integration with other services.
 
-- Install and run [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- Run `mvn clean package`
-- Build an image `docker build -t ear-defender-connector-app:latest .`
-- Run `docker-compose up` command to launch containers
 
-### Alternative
-- Run `docker-compose up --build`
+---
 
-### Docker commands
+## 📘 API Documentation
 
-- `docker ps` - List running containers
-- `docker ps -a` - List all containers
-- `docker-compose up` - Run containers detailed in `docker-compose.yml`
-- `docker-compose down` - Stop and remove containers detailed in `docker-compose.yml`
-- `docker-compose down -v` - Stop and remove containers detailed in `docker-compose.yml` with volumes
-- `docker start <container_id>` - Start a stopped container
-- `docker stop <container_id>` - Stop a running container
-- `docker exec -it <container_id> /bin/bash` - Open interactive shell of a container
-- `docker-compose build` - Build docker image
+Swagger UI is available after launching the service:
 
-## JaCoCo
+Local run:
 
-To generate JaCoCo report run `mvn clean test`
+👉 http://localhost:8080/swagger-ui/index.html
 
-Then go to [`target/site/jacoco/index.html`](target/site/jacoco/index.html)
+Docker Compose run:
+
+👉 http://localhost:9090/swagger-ui/index.html
+
+
+
+---
+
+⚙️ Launch Instructions
+
+Using Docker Compose (recommended)
+
+`docker-compose up --build`
+
+Manual Build & Run
+
+1. Install and start Docker Desktop
+
+
+2. Build the JAR:
+
+`mvn clean package`
+
+
+3. Build the Docker image:
+
+`docker build -t ear-defender-connector-app:latest .`
+
+
+4. Start containers:
+
+`docker-compose up`
+
+
+---
+
+## 🧪 Test Coverage (JaCoCo)
+
+To generate the JaCoCo coverage report:
+
+`mvn clean test`
+
+Then open the report locally at:
+
+`target/site/jacoco/index.html`
